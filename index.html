@@ -11,14 +11,14 @@
 <meta property="og:site_name" content="bJobsX">
 <meta property="og:title" content="bJobsX · Work, paid in Bitcoin">
 <meta property="og:description" content="A professional network where work is paid in Bitcoin, person to person, inside bWalletX. Your name takes payments today.">
-<meta property="og:image" content="https://bjobsx.com/og-bjobsx-v1.png">
+<meta property="og:image" content="https://bjobsx.com/og-bjobsx-v2.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="bJobsX: Work, paid in Bitcoin. A payment slip paid straight to a bWalletX name.">
+<meta property="og:image:alt" content="bJobsX: Work, paid in Bitcoin. An example job card: paid in BSV, hired, paid straight to a bWalletX name.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="bJobsX · Work, paid in Bitcoin">
 <meta name="twitter:description" content="A professional network where work is paid in Bitcoin, person to person, inside bWalletX. Your name takes payments today.">
-<meta name="twitter:image" content="https://bjobsx.com/og-bjobsx-v1.png">
+<meta name="twitter:image" content="https://bjobsx.com/og-bjobsx-v2.png">
 <meta name="theme-color" content="#000000">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -158,6 +158,32 @@ footer{border-top:1px solid #121317;padding:40px 0 56px;color:var(--dim);font-si
 .unlock{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border-top:1px solid var(--edge);background:rgba(245,184,0,.05);font:600 15px/1.2 var(--hf)}
 .hero .story{max-width:460px;width:100%;justify-self:center}
 .unlock span:last-child{color:var(--gold-hi);white-space:nowrap}
+
+/* Hero animation: job card arrives → Paid in BSV chip → applicant slides in → Hired stamp → payment ticks. ~3 s, then a soft glow on the total. */
+html,body{overflow-x:clip}
+.stage{position:relative;justify-self:center;width:100%;max-width:440px}
+.stage .slip{animation:j-arrive .9s var(--ease) both}
+.stage.wait,.stage.wait *{animation-play-state:paused!important}
+.job-t{margin:18px 0 8px;font:700 26px/1.15 var(--hf);letter-spacing:-.02em;animation:j-up .5s var(--ease) .45s both}
+.job-m{display:flex;flex-wrap:wrap;gap:6px;color:var(--dim);font-size:14px;animation:j-up .5s var(--ease) .55s both}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 18px}
+.chip{padding:7px 12px;border-radius:999px;background:rgba(245,184,0,.12);color:var(--gold-hi);font:600 13px/1 var(--hf);animation:j-pop .45s var(--ease) .9s both}
+.chip.c2{background:rgba(255,255,255,.06);color:var(--muted);animation-delay:1.05s}
+.appl{position:relative;display:flex;gap:14px;align-items:center;padding:14px;border-radius:16px;background:rgba(255,255,255,.035);border:1px solid #1d1e23;animation:j-slide .6s var(--ease) 1.35s both}
+.appl b{display:block;font:600 17px/1.25 var(--hf)}
+.appl small{color:var(--dim);font-size:13px;overflow-wrap:anywhere}
+.hired{position:absolute;right:14px;top:50%;margin-top:-17px;padding:8px 12px;border:2px solid var(--gold-hi);border-radius:8px;color:var(--gold-hi);font:700 15px/1 var(--hf);letter-spacing:.16em;text-transform:uppercase;transform:rotate(-8deg);animation:j-stamp .45s cubic-bezier(.3,1.4,.5,1) 2s both}
+.stage .ln.tot{margin-top:16px;animation:j-up .5s var(--ease) 2.25s both}
+.stage .ln.tot>span:last-child{font-variant-numeric:tabular-nums;animation:j-glow 3.2s ease-in-out 3.4s infinite}
+.stage .seal{animation:j-up .5s var(--ease) 2.45s both}
+@keyframes j-arrive{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes j-up{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes j-pop{from{opacity:0;transform:translateY(8px) scale(.9)}to{opacity:1;transform:none}}
+@keyframes j-slide{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
+@keyframes j-stamp{from{opacity:0;transform:scale(1.7) rotate(6deg)}to{opacity:1;transform:rotate(-8deg)}}
+@keyframes j-glow{0%,100%{text-shadow:none}50%{text-shadow:0 0 14px rgba(255,210,77,.55)}}
+@media (max-width:420px){.job-t{font-size:23px}.hired{font-size:13px;padding:7px 10px;right:10px}}
+@media (prefers-reduced-motion:reduce){.stage *{animation:none!important}}
 </style>
 </head>
 <body>
@@ -184,14 +210,16 @@ footer{border-top:1px solid #121317;padding:40px 0 56px;color:var(--dim);font-si
     <p class="hint">Your bWalletX name, <span class="ink">$you</span>, already takes payments.</p>
   </div>
 
-  <div class="slip" role="img" aria-label="Example payment slip: a client pays $you directly for a piece of work, sealed with both names.">
-    <div class="slip-h"><span>Paid to you</span><span class="example">Example</span></div>
-    <div class="slip-who"><div class="av">Y</div><div><b>$you</b><small>you@bwalletx.com</small></div></div>
-    <div class="ln"><span>From</span><span>$studio</span></div>
-    <div class="ln"><span>For</span><span>Landing page copy</span></div>
-    <div class="ln"><span>Arrives</span><span>Straight to your wallet</span></div>
-    <div class="ln tot"><span>Paid</span><span>$40.00</span></div>
-    <div class="seal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffd24d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.4 8 8 9 4.6-1 8-4.5 8-9V6l-8-3Z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg><span>Who paid whom, and when: on the record.</span></div>
+  <div class="stage" role="img" aria-label="Example: a job card for landing page copy, paid in BSV. $you applies, is hired, and $40.00 is paid straight to their wallet.">
+    <div class="slip">
+      <div class="slip-h"><span>Job</span><span class="example">Example</span></div>
+      <div class="job-t">Landing page copy</div>
+      <div class="job-m"><span>$studio</span><span>·</span><span>Remote</span><span>·</span><span>Fixed price</span></div>
+      <div class="chips"><span class="chip">&#8383; Paid in BSV</span><span class="chip c2">Person to person</span></div>
+      <div class="appl"><div class="av">Y</div><div><b>$you</b><small>you@bwalletx.com</small></div><span class="hired" aria-hidden="true">Hired</span></div>
+      <div class="ln tot"><span>Paid</span><span>$<span class="count" data-to="40">40</span>.00</span></div>
+      <div class="seal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffd24d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.4 8 8 9 4.6-1 8-4.5 8-9V6l-8-3Z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg><span>Straight to your wallet. Who paid whom, and when: on the record.</span></div>
+    </div>
   </div>
 </div>
 
@@ -271,5 +299,14 @@ footer{border-top:1px solid #121317;padding:40px 0 56px;color:var(--dim);font-si
     <span>By The Bitcoin Corporation Ltd.</span>
   </div>
 </footer>
+<script>
+(function(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+var st=document.querySelector('.stage');if(!st)return;var cs=st.querySelectorAll('.count');
+cs.forEach(function(el){el.textContent='0'});st.classList.add('wait');
+function go(){st.classList.remove('wait');cs.forEach(function(el){var to=+el.dataset.to,d=900,s=null;
+setTimeout(function(){requestAnimationFrame(function f(t){s=s||t;var k=Math.min(1,(t-s)/d);k=1-Math.pow(1-k,3);el.textContent=Math.round(to*k);if(k<1)requestAnimationFrame(f)})},2350)})}
+if(!('IntersectionObserver' in window))return go();
+var io=new IntersectionObserver(function(e){if(e[0].isIntersecting){io.disconnect();go()}},{threshold:.4});io.observe(st)})();
+</script>
 </body>
 </html>
