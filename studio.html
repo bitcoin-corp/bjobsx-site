@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your profile · bJobsX</title>
+<meta name="description" content="Your bJobsX profile: import your LinkedIn export into your own bWalletX, choose what is public, and mint any of it in your own name.">
+<meta name="robots" content="noindex,follow">
+<meta property="og:type" content="profile"><meta property="og:site_name" content="bJobsX">
+<meta property="og:title" content="A profile on bJobsX"><meta property="og:description" content="Work history held in its owner's own wallet. Only what they choose is shown.">
+<meta property="og:image" content="https://bjobsx.com/og-bjobsx-v3.png"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://bjobsx.com/og-bjobsx-v3.png">
+<meta name="theme-color" content="#000000"><link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/site.css">
+<style>
+main{padding-bottom:40px}
+.me{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:center;padding:22px 0 4px}
+.av{width:84px;height:84px;border-radius:50%;background:#111 center/cover;border:2px solid var(--gold);flex:none}
+.av.init{display:grid;place-items:center;background:radial-gradient(circle at 30% 25%,#ffe08a,#d4af37 45%,#7a5a12);color:#0b0b0b;font:700 36px 'Space Grotesk'}
+.me h1{font-size:clamp(30px,6vw,52px);overflow-wrap:anywhere}
+.handle{font:600 18px 'Space Grotesk';color:var(--gold);margin:6px 0 0;overflow-wrap:anywhere}
+.mail{color:var(--mute);font-size:15px;margin:2px 0 0;overflow-wrap:anywhere}
+.link{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px;font-size:14px}
+.link code{font:500 14px 'IBM Plex Sans';color:var(--ink);background:#000;border:1px solid var(--line);border-radius:999px;padding:6px 12px;overflow-wrap:anywhere}
+.chip{background:none;border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:7px 13px;font:600 13px 'Space Grotesk';cursor:pointer;text-decoration:none}.chip:hover{border-color:var(--gold)}
+.row2{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;align-items:center}
+@media(max-width:760px){.me{grid-template-columns:1fr}.av{width:72px;height:72px}}
+.center{text-align:center;max-width:640px;margin:56px auto 0}
+.center .lede{color:#d8d3c5;font-size:18px;margin:14px 0 24px}
+.center .steps3{text-align:left}
+.testbar{margin:18px 0 0;padding:12px 16px;border-radius:14px;background:var(--gold);color:#000;font-weight:600}.testbar a{color:#000}
+/* profile */
+.sec{margin-top:16px}
+.sec-h{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.sec-h h2{margin:0}
+.vis{display:inline-flex;align-items:center;gap:10px;font:600 14px 'Space Grotesk';color:var(--mute);cursor:pointer;user-select:none;border:1px solid var(--line);border-radius:999px;padding:6px 12px 6px 8px}
+.vis input{appearance:none;width:38px;height:22px;border-radius:99px;background:#222;position:relative;cursor:pointer;margin:0;transition:background .15s}
+.vis input::after{content:"";position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#888;transition:transform .15s,background .15s}
+.vis input:checked{background:rgba(255,210,77,.35)}.vis input:checked::after{transform:translateX(16px);background:var(--gold)}
+.vis:has(input:checked){color:var(--gold);border-color:rgba(255,210,77,.5)}
+.tl{list-style:none;margin:0;padding:0 0 0 18px;border-left:2px solid rgba(255,210,77,.35)}
+.tl li{position:relative;padding:0 0 18px 14px}
+.tl li::before{content:"";position:absolute;left:-25px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px #0b0b0c}
+.tl b{display:block;font:600 17px 'Space Grotesk';overflow-wrap:anywhere}
+.tl .at{color:#e6e1d3;overflow-wrap:anywhere}
+.tl .when{font-size:13px;color:var(--mute)}
+.tl p{margin:6px 0 0;color:#cfcabd;font-size:15px;white-space:pre-line;overflow-wrap:anywhere}
+.summary{white-space:pre-line;color:#d8d3c5;overflow-wrap:anywhere;margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:14px;overflow-wrap:anywhere;max-width:100%}
+.facts{display:flex;flex-wrap:wrap;gap:6px 18px;color:var(--mute);font-size:15px;margin:0 0 10px}
+.facts a{color:var(--gold);overflow-wrap:anywhere}
+.pubbar{margin-top:16px;padding:14px 16px;border-radius:16px;background:#0d0c08;border:1px solid rgba(255,210,77,.4);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pubbar .q{flex:1 1 240px;font-size:14px;color:#d8d3c5;min-width:0}
+.private{color:var(--mute);font-size:14px}
+.conn{width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed}
+.conn td{border-top:1px solid var(--line);padding:8px 6px;overflow-wrap:anywhere;vertical-align:top}
+.conn td:first-child{width:40%}
+/* import */
+.drop{display:grid;place-items:center;text-align:center;border:2px dashed rgba(255,210,77,.4);border-radius:18px;padding:26px 14px;margin-top:12px;cursor:pointer;background:#070708}
+.drop.over{border-color:var(--gold);background:#100e06}
+.drop b{font:700 18px 'Space Grotesk';display:block}
+.counts{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-top:12px}
+.counts div{border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.counts b{display:block;font:700 22px 'Space Grotesk';color:var(--gold)}
+.counts span{font-size:13px;color:var(--mute)}
+/* mint */
+.items{display:grid;gap:8px;margin-top:10px}
+.it{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;border:1px solid #1d1d1d;border-radius:14px;padding:10px 12px;background:#070708}
+.it.sel{border-color:var(--gold)}
+.it input{width:22px;height:22px;accent-color:#ffd24d;margin:0}
+.it .t{font:600 15px 'Space Grotesk';overflow-wrap:anywhere}
+.it .k{font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.1em}
+.seal{font:700 10px 'Space Grotesk';letter-spacing:.1em;background:linear-gradient(180deg,#ffe58a,#ffd24d 55%,#e0a800);color:#000;border-radius:99px;padding:3px 8px}
+.tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--line);padding:14px 0 0;margin-top:14px}
+.cost{flex:1 1 220px;min-width:0}
+.cost .usd{display:block;font:700 34px/1 'Space Grotesk';color:var(--gold)}
+.cost .sats{font-size:13px;color:var(--mute)}
+.optin{display:flex;gap:10px;align-items:flex-start;margin-top:12px;font-size:14px;color:#cfcabd;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.optin input{width:20px;height:20px;accent-color:#ffd24d;margin:2px 0 0;flex:none}
+.rec{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--line);padding:10px 0}
+.rec>div{min-width:0;overflow-wrap:anywhere}
+.field{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.field .pre{color:var(--mute);font-size:15px}
+.field input{flex:1 1 180px;min-width:0;min-height:46px;border-radius:999px;border:1px solid rgba(255,210,77,.35);background:#000;color:var(--ink);padding:0 16px;font:500 16px 'IBM Plex Sans'}
+.field input[aria-invalid=true]{border-color:#ff8a7a}
+.ask{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:16px;background:rgba(0,0,0,.75)}
+.ask>div{max-width:420px;width:100%;background:#0d0d0f;border:1px solid rgba(255,210,77,.35);border-radius:16px;padding:22px}
+.ask h3{margin:0 0 8px;color:var(--gold);font:700 19px 'Space Grotesk'}.ask p{margin:0 0 18px;color:#c9c4b5;font-size:15px}
+.ask .row{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<header class="wrap nav">
+  <a class="brand" href="/" aria-label="bJobsX home"><img src="/logo.svg" alt="" width="30" height="30"><span>bJobs<span class="gold">X</span></span></a>
+  <nav class="nav-links" aria-label="Main"><a href="/browse">Browse</a><a href="https://bwalletx.com/jobs" title="Paid work on bWalletX">Jobs<span class="hide-s"> · Paid work</span></a><span data-bwx></span></nav>
+</header>
+<main class="wrap">
+  <p class="testbar" id="testbar" hidden>Preview copy. Connecting your wallet only works on <a href="https://bjobsx.com/studio">bjobsx.com</a>. Importing works here: it stays in this browser.</p>
+
+  <section id="gate" class="center" hidden>
+    <p class="kicker">Your profile</p>
+    <h1>Connect your wallet to open your profile.</h1>
+    <p class="lede">Your profile carries your bWalletX name. Then import your LinkedIn export and choose what to show.</p>
+    <span data-bwx></span>
+    <ol class="steps3" aria-label="Three steps">
+      <li><span class="n">1</span><div><b>Connect bWalletX</b><span class="s">Opens your profile</span></div></li>
+      <li><span class="n">2</span><div><b>Import LinkedIn</b><span class="s">Read in your browser</span></div></li>
+      <li><span class="n">3</span><div><b>Mint</b><span class="s">Private, in your name</span></div></li>
+    </ol>
+    <p class="hint" style="margin-top:18px">Want to look first? <button class="chip" type="button" data-open="import">Try the import</button> It stays in this browser. No wallet yet? <a class="gold" href="https://bwalletx.com/get">Get bWalletX</a>.</p>
+  </section>
+
+  <section id="nf" class="center" hidden>
+    <p class="kicker">Profile</p>
+    <h1 id="nfTitle">No profile here yet.</h1>
+    <p class="lede" id="nfLede">Nobody has made this profile public on bJobsX. If it's yours, connect your wallet and open your profile.</p>
+    <a class="btn btn-gold" href="/studio">Open my profile</a>
+  </section>
+
+  <section id="loading" class="center"><p class="mute">Opening the profile…</p></section>
+
+  <section id="page" hidden>
+    <div class="me">
+      <div class="av" id="av" role="img" aria-label=""></div>
+      <div style="min-width:0">
+        <p class="kicker" id="kick">Profile</p>
+        <h1 id="name"></h1>
+        <p class="handle" id="handle"></p>
+        <p class="mail" id="mail"></p>
+        <div class="link" id="linkRow" hidden><code id="pubLink"></code><button class="chip" type="button" id="copyLink">Copy link</button></div>
+      </div>
+    </div>
+
+    <ol class="steps3" id="owner3" hidden aria-label="Your three steps">
+      <li id="st1" class="done"><button type="button" data-open="account"><span class="n">1</span><div><b id="st1b">Wallet connected</b><span class="s" id="st1s"></span></div></button></li>
+      <li id="st2"><button type="button" data-open="import"><span class="n">2</span><div><b>Import LinkedIn</b><span class="s" id="st2s">Not imported yet</span></div></button></li>
+      <li id="st3"><button type="button" data-open="mint"><span class="n">3</span><div><b>Mint</b><span class="s" id="st3s">After importing</span></div></button></li>
+    </ol>
+    <div class="row2" id="ownerLinks" hidden><button class="chip" type="button" data-open="import">Import</button><button class="chip" type="button" data-open="account" id="unameChip">Username</button><button class="chip" type="button" data-open="status">What works today</button><span data-bwx="signout"></span></div>
+    <div class="row2" id="pubLinks" hidden><button class="chip" type="button" data-open="status">What works today</button></div>
+
+    <div id="profile"></div>
+
+    <div class="pubbar" id="pubbar" hidden>
+      <span class="q" id="pubQ"></span>
+      <button class="btn btn-gold" type="button" id="pubSave">Publish</button>
+      <p class="msg" id="pubMsg" aria-live="polite" style="flex:1 1 100%;margin:0"></p>
+    </div>
+
+    <section class="panel" id="connPanel" hidden aria-labelledby="cH">
+      <div class="sec-h"><h2 id="cH">Connections <span class="badge coming">Only you</span></h2></div>
+      <p class="private">These are other people's details. Only you see them, on this device. They are never published. You can mint them privately below if you choose.</p>
+      <details><summary class="gold" style="cursor:pointer;font:600 14px 'Space Grotesk'" id="cSum">Show</summary><table class="conn"><tbody id="cList"></tbody></table><p class="hint" id="cMore"></p></details>
+    </section>
+
+    <section class="panel" id="mint" hidden aria-labelledby="mH">
+      <h2 id="mH">Mint <span class="badge" id="mBadge"></span></h2>
+      <p class="mute" style="margin:0">Each record is locked with your wallet's keys before it goes on chain. Only you can open it. You can make any one public later. 1p per record plus a small network fee. Your wallet asks once per batch of up to 25.</p>
+      <label class="optin"><input type="checkbox" id="withConn"><span><b>Include my connections (private only).</b> Off by default. They are other people's details: they are only ever minted locked to you, never made public.</span></label>
+      <div class="items" id="items"></div>
+      <div class="tools">
+        <div class="cost" aria-live="polite"><span class="usd" id="usd"></span><span class="sats" id="sats"></span></div>
+        <button class="btn btn-ghost" type="button" id="selAll">Select all</button>
+        <button class="btn btn-ghost" type="button" id="dryBtn">Dry run</button>
+        <button class="btn btn-gold" type="button" id="mintBtn">Mint</button>
+        <p class="msg" id="mintMsg" aria-live="polite" style="flex:1 1 100%;margin:0"></p>
+        <p class="msg bad" id="mintErr" aria-live="assertive" style="flex:1 1 100%;margin:0"></p>
+      </div>
+      <h3 style="font:700 18px 'Space Grotesk';margin:22px 0 4px">Your minted records</h3>
+      <div id="minted"><p class="mute">Open them with your wallet. <button class="chip" type="button" id="openBtn">Open my records</button></p></div>
+    </section>
+  </section>
+
+  <dialog class="modal" id="import" aria-labelledby="iH"><button class="x" type="button" data-close aria-label="Close">×</button><div class="mb">
+    <h2 id="iH">Import your LinkedIn data</h2>
+    <p class="mute" style="margin:0">Drop the ZIP from LinkedIn, or the CSV files inside it. It's read here in your browser and never uploaded. <button class="chip" type="button" data-walk>How to get it</button></p>
+    <label class="drop" id="drop"><input type="file" id="file" accept=".zip,.csv,application/zip,text/csv" multiple hidden><span><b>Choose the ZIP or CSVs</b><span class="mute">or drop them here · up to 60 MB</span></span></label>
+    <p class="msg" id="iMsg" aria-live="polite"></p>
+    <div class="counts" id="counts"></div>
+    <div class="row2" id="iDone" hidden><button class="btn btn-gold" type="button" data-close>See my profile</button><button class="btn btn-ghost" type="button" id="iClear">Remove from this browser</button></div>
+  </div></dialog>
+
+  <dialog class="modal" id="account" aria-labelledby="aH"><button class="x" type="button" data-close aria-label="Close">×</button><div class="mb">
+    <h2 id="aH">Your profile link <span class="badge" id="uBadge"></span></h2>
+    <p class="mute">Your profile starts with your bWalletX name. Pick another username if you like. Your wallet signs the change, so only you can make it.</p>
+    <form class="field" id="uForm" novalidate>
+      <span class="pre">bjobsx.com/u/</span><input id="uIn" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="30" aria-label="Username" aria-describedby="uHint">
+      <button class="btn btn-gold" id="uSave" type="submit">Save</button>
+    </form>
+    <p class="hint" id="uHint">3 to 30 letters, numbers, - or _. Names must be unique.</p>
+    <p class="msg" id="uMsg" aria-live="polite"></p>
+  </div></dialog>
+
+  <dialog class="modal" id="status" aria-labelledby="sH"><button class="x" type="button" data-close aria-label="Close">×</button><div class="mb">
+    <h2 id="sH">What works today</h2>
+    <ul class="check" id="checklist"></ul>
+  </div></dialog>
+</main>
+<footer>
+  bJobsX · part of the bWalletX family · THE BITCOIN CORPORATION LTD, company no. 16735102
+  <nav aria-label="Footer"><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/browse">Browse</a><a href="https://bwalletx.com/jobs">Paid work</a></nav>
+</footer>
+<script src="https://unpkg.com/@bwalletx/connect@0.5.0/dist/bwalletx-connect.global.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="/bwx.js"></script>
+<script src="/walk.js"></script>
+<script type="module" src="/studio.js"></script>
+</body>
+</html>
