@@ -1,5 +1,5 @@
 // bJobsX profile page: /studio (the signed-in wallet's own) and /u/<username> (anyone's; owner tools when it's yours).
-// The page names the wallet by its paymail ($name, name@bwalletx.com). It never shows the identity key.
+// The page names the wallet by its full paymail (name@bwalletx.com); with no name yet, a short key + "Get your name".
 //
 // Privacy model:
 // - The LinkedIn export is parsed here, in the browser (lib/linkedin.js). The import is kept in this browser's
@@ -99,8 +99,11 @@ function head() {
   document.title = `${own ? 'Your profile' : name} · bJobsX`;
   $('kick').textContent = own ? (mode === 'guest' ? 'Your profile · on this device' : 'Your profile') : 'Profile';
   $('name').textContent = name;
-  $('handle').textContent = pg.alias ? '$' + pg.alias : mode === 'guest' ? 'Connect bWalletX to get your link' : '';
-  $('mail').textContent = (own ? p?.headline : pub?.headline) || pg.paymail || '';
+  // Full paymail is the primary identity label (never the key alone or the bare $handle).
+  const sk = pg.identityKey ? pg.identityKey.slice(0, 6) + '\u2026' + pg.identityKey.slice(-4) : '';
+  $('handle').textContent = pg.paymail || (mode === 'guest' ? 'Connect bWalletX to get your link' : sk);
+  $('mail').textContent = (own ? p?.headline : pub?.headline) || '';
+  if (!pg.paymail && mode === 'owner') $('mail').insertAdjacentHTML('beforeend', ' <a href="https://bwalletx.com/get" target="_blank" rel="noopener">Get your name</a>');
   setAvatar(pg.avatar, name);
   if (pg.username && mode !== 'guest') {
     $('linkRow').hidden = false; $('pubLink').textContent = 'bjobsx.com/u/' + pg.username;
@@ -141,7 +144,7 @@ function paint() {
   $('unameChip').hidden = mode === 'guest';
   $('st1').classList.toggle('done', mode === 'owner');
   $('st1b').textContent = mode === 'owner' ? 'Wallet connected' : 'Connect bWalletX';
-  $('st1s').textContent = mode === 'owner' ? (pg.alias ? '$' + pg.alias : 'Connected') : 'To publish and mint';
+  $('st1s').textContent = mode === 'owner' ? (pg.paymail || (pg.identityKey ? pg.identityKey.slice(0, 6) + '\u2026' + pg.identityKey.slice(-4) : 'Connected')) : 'To publish and mint';
   if (own) {
     const c = data ? L.counts(data) : null;
     $('st2').classList.toggle('done', !!data);
