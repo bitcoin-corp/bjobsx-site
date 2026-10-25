@@ -1,0 +1,11 @@
+{
+  "v": 2,
+  "name": "bJobsX",
+  "mode": "dark",
+  "accent": "#FFD24D",
+  "accentHi": "#FFE58A",
+  "bg": "#000000",
+  "surface": "#0B0B0C",
+  "text": "#F4F1E8",
+  "logo": "/logo.svg"
+}
