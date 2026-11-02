@@ -74,5 +74,11 @@
       "destination": "https://bjobsx.com/:path*",
       "permanent": true
     }
-  ]
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "*": false,
+      "main": true
+    }
+  }
 }
