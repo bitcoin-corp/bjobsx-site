@@ -19,51 +19,57 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/site.css">
 <link rel="stylesheet" href="/home.css">
+<link rel="preload" as="image" href="/media/terrornode-street.jpg">
 </head>
 <body>
-<header class="hd">
-  <div class="wrap nav">
-    <a class="brand" href="/" aria-label="bJobsX home"><img src="/logo.svg" alt="" width="28" height="28"><span class="beta">Beta</span></a>
-    <nav class="nav-links" aria-label="Main"><a href="/contracts">Jobs</a><a href="/browse">People</a><a class="hide-s" href="https://bwalletx.com/get">Get bWalletX</a><span data-bwx></span></nav>
-  </div>
-</header>
+<aside class="xs-strip" aria-label="bWalletX"><a href="https://bwalletx.com/"><svg viewBox="23 8 74 100" aria-hidden="true" focusable="false"><defs><linearGradient id="xs-sg" gradientUnits="userSpaceOnUse" x1="0" y1="12" x2="0" y2="105"><stop offset="0" stop-color="#FFE58A"/><stop offset=".55" stop-color="#FFD24D"/><stop offset="1" stop-color="#C98F00"/></linearGradient></defs><path fill="url(#xs-sg)" d="M45 12V72H27V30Z M27 72a33 33 0 1 1 66 0a33 33 0 1 1-66 0Z M45 72a15 15 0 1 0 30 0a15 15 0 1 0-30 0Z"/></svg><span>Part of <b>bWalletX</b></span><span class="xs-go" aria-hidden="true">&rarr;</span></a></aside>
 
 <main>
-  <section class="top" aria-labelledby="topH">
-    <div class="ghost-cards" aria-hidden="true"></div>
-    <span class="ghost-word" aria-hidden="true">JOBS</span>
-    <div class="wrap top-in">
-      <a class="part" href="https://bwalletx.com/"><img src="/logo.svg" alt="" width="14" height="14"> Part of <b>bWalletX</b> <span aria-hidden="true">&rarr;</span></a>
-      <p class="eyebrow">Jobs · Contracts · Organisations</p>
-      <h1 id="topH" class="lockup"><img class="lk-b" src="/logo.svg" alt="" width="96" height="96"><span class="lk-n" aria-hidden="true">JobsX</span><span class="sr">bJobsX</span></h1>
-      <p class="lede">Small paid jobs, paid in BSV straight to your wallet. Your work history stays in your bWalletX, and soon anyone can start an organisation and give it a token.</p>
-      <div class="ctas">
-        <a class="btn btn-white" href="#jobs">See open jobs</a>
-        <a class="btn btn-ghost" href="#how">How bJobsX works</a>
-        <a class="btn btn-gold" href="https://bwalletx.com/get">Get bWalletX</a>
-      </div>
-    </div>
-  </section>
+<section class="xs-top rx-jobs" id="top" aria-labelledby="xs-h1">
+  <img class="xs-bg" src="/media/terrornode-street.jpg" alt="" width="640" height="360" fetchpriority="high" decoding="async">
+  <header class="xs-wrap xs-nav"><a class="xs-brand" href="/" aria-label="bJobsX home"><svg viewBox="23 8 74 100" aria-hidden="true" focusable="false"><path fill="currentColor" d="M45 12V72H27V30Z M27 72a33 33 0 1 1 66 0a33 33 0 1 1-66 0Z M45 72a15 15 0 1 0 30 0a15 15 0 1 0-30 0Z"/></svg><span><span class="xs-sr">b</span><span class="xs-nm">Jobs</span><i>X</i></span><span class="beta">Beta</span></a><nav class="xs-links" aria-label="Main"><a href="/contracts">Jobs</a><a class="xs-hs" href="/browse">People</a><a class="xs-hs" href="/studio">Your profile</a><span data-bwx></span></nav></header>
+  <div class="xs-wrap xs-in">
+    <h1 class="xs-h1" id="xs-h1"><svg class="xs-hb" viewBox="23 8 74 100" aria-hidden="true" focusable="false"><path fill="currentColor" d="M45 12V72H27V30Z M27 72a33 33 0 1 1 66 0a33 33 0 1 1-66 0Z M45 72a15 15 0 1 0 30 0a15 15 0 1 0-30 0Z"/></svg><span class="xs-sr">b</span><span class="xs-nm rx-g">JobsX</span></h1>
+    <p class="xs-lede">Small paid jobs, paid in BSV straight to your wallet.</p>
+    <div class="xs-ctas"><a class="xs-btn xs-white" href="#jobs">See open contracts</a><a class="xs-btn xs-ghost" href="#how">How bJobsX works</a><a class="xs-btn xs-gold" href="https://bwalletx.com/get">Get bWalletX</a></div>
+  </div>
+  <div class="rx-ghost" aria-hidden="true">JOBSX</div>
+</section>
 
-  <section class="jobs" id="jobs" aria-roledescription="carousel" aria-label="Open jobs">
-    <p class="kick">Open jobs</p>
-    <div class="flow" tabindex="0" aria-label="Open jobs. Use the left and right arrow keys.">
-      <button class="arrow prev" type="button" aria-label="Previous job">&larr;</button>
-      <button class="arrow next" type="button" aria-label="Next job">&rarr;</button>
-    </div>
-    <div class="info" aria-live="polite">
-      <h2 class="info-t"></h2>
-      <p class="info-l"></p>
-      <div class="info-m"></div>
-      <a class="btn btn-gold info-go" href="/contracts">See open jobs</a>
-      <p class="info-n" data-count></p>
-    </div>
-  </section>
+<section class="xs-cfs jobs" id="jobs" aria-roledescription="carousel" aria-labelledby="jobsH">
+  <p class="xs-kick" id="jobsH">Open contracts</p>
+  <div class="flow" tabindex="0" aria-label="Open contracts. Use the left and right arrow keys.">
+    <button class="arrow prev" type="button" aria-label="Previous contract">&larr;</button>
+    <button class="arrow next" type="button" aria-label="Next contract">&rarr;</button>
+  </div>
+  <div class="info" aria-live="polite">
+    <h2 class="info-t"></h2>
+    <p class="info-l"></p>
+    <p class="info-by"></p>
+    <div class="info-m"></div>
+    <div class="info-acts"><a class="xs-btn xs-gold info-go" href="/contracts">See open contracts</a><a class="xs-btn xs-ghost info-talk" href="#" hidden>Talk about this contract</a></div>
+    <p class="info-n" data-count></p>
+    <p class="info-more"><a href="/contracts">All contracts and how they work</a><a data-post-contract href="#" hidden>Post a contract</a></p>
+  </div>
+  <p class="xs-sr" aria-live="polite" data-announce></p>
+</section>
 
-  <section class="wrap below" id="how" aria-labelledby="howH">
+<section class="xs-sec" id="how" aria-labelledby="howH">
+  <div class="xs-wrap">
+    <div class="xs-cat"><p class="xs-eye">How bJobsX works</p><h2 id="howH">What's in <i>bJobsX.</i></h2><p class="xs-sub">Paid contracts and your profile are live. Organisations and tokens are next.</p></div>
+    <div class="tiles">
+      <a class="tile" href="/contracts"><h3>Paid contracts <span class="badge live">Live</span></h3><p>Small jobs on our open-source apps and games. Do the work, open a pull request, and get paid in BSV when it's merged.</p><span class="more">See the contracts &rarr;</span></a>
+      <a class="tile" href="/studio"><h3>Your profile, in your wallet <span class="badge live">Live</span></h3><p>Bring in your LinkedIn history, choose what's public, and mint any of it in your own name. Private by default.</p><span class="more">Open your profile &rarr;</span></a>
+      <div class="tile"><h3>Organisations <span class="badge coming">Next</span></h3><p>Start an organisation, add its people and their roles, and post its jobs. Each applicant gets a private room to talk it through.</p></div>
+      <div class="tile"><h3>Tokens <span class="badge coming">Next</span></h3><p>Give your organisation, your project or yourself a token. Anyone can launch one.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="xs-sec" id="get" aria-labelledby="getH">
+  <div class="xs-wrap">
+    <div class="xs-cat"><p class="xs-eye">New here?</p><h2 id="getH">Get <i>bWalletX</i> first.</h2><p class="xs-sub">It's free. You sign in to bJobsX with it, and it's where you get paid.</p></div>
     <div class="get">
-      <h2>New here? Get bWalletX first</h2>
-      <p>It's free. You sign in to bJobsX with it, and it's where you get paid.</p>
       <a class="get-main" href="https://bwalletx.com/get"><img src="/logo.svg" alt="" width="34" height="34"><span><b>Get bWalletX</b><small>Free · your keys, your coins</small></span><span aria-hidden="true">&rarr;</span></a>
       <div class="get-4">
         <a href="https://bwalletx.com/iphone"><small>Get bWalletX for</small><b>iPhone</b></a>
@@ -72,16 +78,8 @@
         <a href="https://web.bwalletx.com/"><small>Use bWalletX on</small><b>the web</b></a>
       </div>
     </div>
-    <div class="whats">
-      <p class="kick left" id="howH">What's in bJobsX</p>
-      <div class="tiles">
-        <a class="tile" href="/contracts"><h3>Paid contracts <span class="badge live">Live</span></h3><p>Small jobs on our open-source apps and games. Do the work, open a pull request, and get paid in BSV when it's merged.</p><span class="more">See the contracts &rarr;</span></a>
-        <a class="tile" href="/studio"><h3>Your profile, in your wallet <span class="badge live">Live</span></h3><p>Bring in your LinkedIn history, choose what's public, and mint any of it in your own name. Private by default.</p><span class="more">Open your profile &rarr;</span></a>
-        <div class="tile"><h3>Organisations <span class="badge coming">Next</span></h3><p>Start an organisation, add its people and their roles, and post its jobs. Each applicant gets a private room to talk it through.</p></div>
-        <div class="tile"><h3>Tokens <span class="badge coming">Next</span></h3><p>Give your organisation, your project or yourself a token. Anyone can launch one.</p></div>
-      </div>
-    </div>
-  </section>
+  </div>
+</section>
 </main>
 
 <footer>
@@ -90,13 +88,13 @@
 </footer>
 
 <script type="application/json" id="jobs-data">[
-  {"id":"tn-01","scope":"TERRORNODE","kind":"Contract","title":"Level pack format and checker","line":"A data-only level pack for the minigun shooter, with a checker that rejects bad packs.","pay":"1 BSV","time":"About 1 hour with AI","art":"https://tokenblaster.lol/arcade/gallery.jpg","color":"#ff5a48","href":"/contracts#c01","go":"Apply for TN-01"},
-  {"id":"tn-03","scope":"TERRORNODE","kind":"Contract","title":"Drone swarm enemy","line":"A flock of flying erobot drones that circle and dive. Pooled, capped and shootable.","pay":"1 BSV","time":"About 1 hour with AI","art":"https://tokenblaster.lol/arcade/gallery.jpg","color":"#ff5a48","href":"/contracts#c03","go":"Apply for TN-03"},
-  {"id":"tn-04","scope":"TERRORNODE","kind":"Contract","title":"Gamepad support","line":"Play a solo run with a standard gamepad: move, aim, fire and pause, with a dead zone.","pay":"1 BSV","time":"About 1 hour with AI","art":"https://tokenblaster.lol/arcade/gallery.jpg","color":"#ff5a48","href":"/contracts#c04","go":"Apply for TN-04"},
-  {"id":"b-aware","scope":"bWalletX","kind":"Security","title":"Security testing (b-Aware)","line":"Find a way to take funds, read keys or get past an approval in bWalletX or bChatX.","pay":"Up to 10 BSV","time":"Per valid report","ghost":"AWARE","color":"#ffd24d","href":"https://bwalletx.com/b-aware","go":"Read the b-Aware rules"},
-  {"id":"android","scope":"bWalletX","kind":"Testing","title":"Paid Android testing","line":"Use bWallet from the Google Play test every day for 14 days and tell us what breaks.","pay":"1 BSV","time":"14 days","ghost":"TEST","color":"#6ee09a","href":"https://bwalletx.com/testers","go":"Apply to test"}
+  {"id":"tn-01","ref":"TN-01","version":"1","status":"open","poster":{"house":true,"name":"The Bitcoin Corporation Ltd","handle":"","short":"bCorp"},"scope":"TERRORNODE","kind":"Contract","title":"Level pack format and checker","line":"A data-only level pack for the minigun shooter, with a checker that rejects bad packs.","pay":"1 BSV","time":"About 1 hour with AI","art":"/media/terrornode-street.jpg","color":"#ff5a48","href":"/contracts#c01","go":"Apply for TN-01"},
+  {"id":"tn-03","ref":"TN-03","version":"1","status":"open","poster":{"house":true,"name":"The Bitcoin Corporation Ltd","handle":"","short":"bCorp"},"scope":"TERRORNODE","kind":"Contract","title":"Drone swarm enemy","line":"A flock of flying erobot drones that circle and dive. Pooled, capped and shootable.","pay":"1 BSV","time":"About 1 hour with AI","art":"/media/terrornode-street.jpg","color":"#ff5a48","href":"/contracts#c03","go":"Apply for TN-03"},
+  {"id":"tn-04","ref":"TN-04","version":"1","status":"open","poster":{"house":true,"name":"The Bitcoin Corporation Ltd","handle":"","short":"bCorp"},"scope":"TERRORNODE","kind":"Contract","title":"Gamepad support","line":"Play a solo run with a standard gamepad: move, aim, fire and pause, with a dead zone.","pay":"1 BSV","time":"About 1 hour with AI","art":"/media/terrornode-street.jpg","color":"#ff5a48","href":"/contracts#c04","go":"Apply for TN-04"},
+  {"id":"b-aware","ref":"B-AWARE","version":"1","status":"open","poster":{"house":true,"name":"The Bitcoin Corporation Ltd","handle":"","short":"bCorp"},"scope":"bWalletX","kind":"Security","title":"Security testing (b-Aware)","line":"Find a way to take funds, read keys or get past an approval in bWalletX or bChatX.","pay":"Up to 10 BSV","time":"Per valid report","ghost":"AWARE","color":"#ffd24d","href":"https://bwalletx.com/b-aware","go":"Read the b-Aware rules"},
+  {"id":"android","ref":"ANDROID","version":"1","status":"open","poster":{"house":true,"name":"The Bitcoin Corporation Ltd","handle":"","short":"bCorp"},"scope":"bWalletX","kind":"Testing","title":"Paid Android testing","line":"Use bWallet from the Google Play test every day for 14 days and tell us what breaks.","pay":"1 BSV","time":"14 days","ghost":"TEST","color":"#6ee09a","href":"https://bwalletx.com/testers","go":"Apply to test"}
 ]</script>
-<script src="/home.js"></script>
+<script type="module" src="/home.js"></script>
 <script src="https://unpkg.com/@bwalletx/connect@0.7.0/dist/bwalletx-connect.global.js" integrity="sha384-VkIrDOw3Hmv7qnytbLGT1hNz7DbJ3IJiI91HSOTqjWu146/hl1KINi4v/hPzTfvI" crossorigin="anonymous"></script>
 <script src="/bwx.js"></script>
 </body>

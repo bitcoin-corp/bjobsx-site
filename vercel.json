@@ -1,5 +1,10 @@
 {
   "cleanUrls": true,
+  "functions": {
+    "api/contracts.js": {
+      "includeFiles": "data/contracts.json"
+    }
+  },
   "rewrites": [
     {
       "source": "/u/:name",

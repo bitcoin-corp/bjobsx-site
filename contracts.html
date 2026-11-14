@@ -52,6 +52,14 @@ section.blk{margin-top:48px}
 .two .panel{margin:0}
 .two h3{font:700 19px 'Space Grotesk',system-ui,sans-serif;margin:0 0 8px}
 .rules{margin:0;padding-left:18px;display:grid;gap:6px;color:#d8d3c5;font-size:15px}
+.contract .by{font-size:13px;color:#cfcabd;margin:0 0 4px}
+.contract .by.other{color:#e9e4d6;border-left:2px solid var(--gold);padding-left:8px}
+.contract .badge.state{margin-left:auto;background:rgba(255,255,255,.08);color:#e9e4d6}
+.contract.is-taken,.contract.is-done{opacity:.72}
+.contract .claim.shut{font:600 14px 'Space Grotesk',system-ui,sans-serif;color:var(--mute);margin:0}
+.contract .talk{margin:14px 0 0;font:600 14px 'Space Grotesk',system-ui,sans-serif}
+.contract.fresh{border-color:rgba(255,210,77,.6)}
+.blk.extra:has(.cgrid:empty){display:none}
 </style>
 </head>
 <body>
@@ -82,53 +90,62 @@ section.blk{margin-top:48px}
       <a class="btn btn-ghost" href="https://tokenblaster.lol/arcade/terrornode">Play it free</a>
     </div>
 
-    <div class="cgrid">
-      <article class="contract" aria-labelledby="c01">
-        <div class="top"><span class="id">TN-01 · TOOLING</span><span class="pay">1 BSV</span></div>
-        <h3 id="c01">Level pack format and checker</h3>
-        <p class="est">About an hour with AI. Starts the level-pack work.</p>
-        <h4>Build</h4>
-        <p>A data-only level pack at <code>content/terrornode/levels/&lt;slug&gt;/level.json</code>, following the bRacer pack rules in <code>src/lib/content/schema.ts</code>: name, blurb, Kweg's line, act, palette, erobotz mix, licence and author. Add its checker to <code>pnpm content:check</code>, plus one example pack. The game doesn't load packs yet.</p>
-        <h4>Done when</h4>
-        <ul>
-          <li>The example pack passes <code>pnpm content:check</code>.</li>
-          <li>At least six bad packs fail with a clear message: bad slug, missing licence, a URL in a text field, a mix that doesn't add up to 1, an unknown palette, an act out of range. They run as tests under <code>pnpm test</code>.</li>
-          <li><code>pnpm typecheck</code> and <code>pnpm lint</code> pass.</li>
-        </ul>
-        <div class="claim"><a class="btn btn-gold" href="mailto:support@bwalletx.com?subject=Contract%20TN-01&amp;body=I'd%20like%20to%20take%20TN-01.%20My%20%24handle%3A%20">Claim TN-01</a></div>
-      </article>
+    <div class="cgrid" data-contracts="TERRORNODE"><!-- contracts:TERRORNODE -->
+<article class="contract" aria-labelledby="c01" data-id="tn-01" data-version="1" data-status="open">
+  <div class="top"><span class="id">TN-01 · TOOLING</span><span class="pay">1 BSV</span></div>
+  <h3 id="c01">Level pack format and checker</h3>
+  <p class="by">Posted and paid by The Bitcoin Corporation Ltd</p>
+  <p class="est">About an hour with AI. Starts the level-pack work.</p>
+  <h4>Build</h4>
+  <p>A data-only level pack at <code>content/terrornode/levels/&lt;slug&gt;/level.json</code>, following the bRacer pack rules in <code>src/lib/content/schema.ts</code>: name, blurb, Kweg's line, act, palette, erobotz mix, licence and author. Add its checker to <code>pnpm content:check</code>, plus one example pack. The game doesn't load packs yet.</p>
+  <h4>Done when</h4>
+  <ul>
+    <li>The example pack passes <code>pnpm content:check</code>.</li>
+    <li>At least six bad packs fail with a clear message: bad slug, missing licence, a URL in a text field, a mix that doesn't add up to 1, an unknown palette, an act out of range. They run as tests under <code>pnpm test</code>.</li>
+    <li><code>pnpm typecheck</code> and <code>pnpm lint</code> pass.</li>
+  </ul>
+  <div class="claim"><a class="btn btn-gold" href="mailto:support@bwalletx.com?subject=Contract%20TN-01&amp;body=I'd%20like%20to%20take%20TN-01.%20My%20%24handle%3A%20">Claim TN-01</a></div>
+</article>
 
-      <article class="contract" aria-labelledby="c03">
-        <div class="top"><span class="id">TN-03 · ENEMIES</span><span class="pay">1 BSV</span></div>
-        <h3 id="c03">Drone swarm enemy</h3>
-        <p class="est">About an hour with AI. No other contract needed first.</p>
-        <h4>Build</h4>
-        <p>A new enemy: a small flock of flying erobot drones that circle and dive at the player. Pooled, so no new objects each frame, and each with a simple hit sphere so the minigun can knock them down. Off by default, switched on with <code>?drones=1</code>.</p>
-        <h4>Done when</h4>
-        <ul>
-          <li>With <code>?drones=1&amp;dryrun=1</code>, a flock appears, dives, and drones fall when shot.</li>
-          <li>The pool has a cap in <code>tuning.ts</code>, halved on the phone render tier, with a test.</li>
-          <li>Without <code>?drones=1</code>, nothing changes. Typecheck, lint and tests pass.</li>
-        </ul>
-        <div class="claim"><a class="btn btn-gold" href="mailto:support@bwalletx.com?subject=Contract%20TN-03&amp;body=I'd%20like%20to%20take%20TN-03.%20My%20%24handle%3A%20">Claim TN-03</a></div>
-      </article>
+<article class="contract" aria-labelledby="c03" data-id="tn-03" data-version="1" data-status="open">
+  <div class="top"><span class="id">TN-03 · ENEMIES</span><span class="pay">1 BSV</span></div>
+  <h3 id="c03">Drone swarm enemy</h3>
+  <p class="by">Posted and paid by The Bitcoin Corporation Ltd</p>
+  <p class="est">About an hour with AI. No other contract needed first.</p>
+  <h4>Build</h4>
+  <p>A new enemy: a small flock of flying erobot drones that circle and dive at the player. Pooled, so no new objects each frame, and each with a simple hit sphere so the minigun can knock them down. Off by default, switched on with <code>?drones=1</code>.</p>
+  <h4>Done when</h4>
+  <ul>
+    <li>With <code>?drones=1&amp;dryrun=1</code>, a flock appears, dives, and drones fall when shot.</li>
+    <li>The pool has a cap in <code>tuning.ts</code>, halved on the phone render tier, with a test.</li>
+    <li>Without <code>?drones=1</code>, nothing changes. Typecheck, lint and tests pass.</li>
+  </ul>
+  <div class="claim"><a class="btn btn-gold" href="mailto:support@bwalletx.com?subject=Contract%20TN-03&amp;body=I'd%20like%20to%20take%20TN-03.%20My%20%24handle%3A%20">Claim TN-03</a></div>
+</article>
 
-      <article class="contract" aria-labelledby="c04">
-        <div class="top"><span class="id">TN-04 · INPUT</span><span class="pay">1 BSV</span></div>
-        <h3 id="c04">Gamepad support (solo)</h3>
-        <p class="est">About an hour with AI. No other contract needed first.</p>
-        <h4>Build</h4>
-        <p>Standard Gamepad API support in solo play: move, aim, fire and pause, with a dead zone. Put the mapping in a pure module, <code>src/lib/terrornode/input.ts</code>, so it can be tested without a browser. Wire it into <code>ShootingGallery.tsx</code>.</p>
-        <h4>Done when</h4>
-        <ul>
-          <li>A gamepad plays a solo run in Chrome, and in Safari where the pad is supported.</li>
-          <li>Mapping and dead-zone tests run under <code>pnpm test</code>.</li>
-          <li>Keyboard, mouse and touch work exactly as before. Typecheck and lint pass.</li>
-        </ul>
-        <div class="claim"><a class="btn btn-gold" href="mailto:support@bwalletx.com?subject=Contract%20TN-04&amp;body=I'd%20like%20to%20take%20TN-04.%20My%20%24handle%3A%20">Claim TN-04</a></div>
-      </article>
+<article class="contract" aria-labelledby="c04" data-id="tn-04" data-version="1" data-status="open">
+  <div class="top"><span class="id">TN-04 · INPUT</span><span class="pay">1 BSV</span></div>
+  <h3 id="c04">Gamepad support (solo)</h3>
+  <p class="by">Posted and paid by The Bitcoin Corporation Ltd</p>
+  <p class="est">About an hour with AI. No other contract needed first.</p>
+  <h4>Build</h4>
+  <p>Standard Gamepad API support in solo play: move, aim, fire and pause, with a dead zone. Put the mapping in a pure module, <code>src/lib/terrornode/input.ts</code>, so it can be tested without a browser. Wire it into <code>ShootingGallery.tsx</code>.</p>
+  <h4>Done when</h4>
+  <ul>
+    <li>A gamepad plays a solo run in Chrome, and in Safari where the pad is supported.</li>
+    <li>Mapping and dead-zone tests run under <code>pnpm test</code>.</li>
+    <li>Keyboard, mouse and touch work exactly as before. Typecheck and lint pass.</li>
+  </ul>
+  <div class="claim"><a class="btn btn-gold" href="mailto:support@bwalletx.com?subject=Contract%20TN-04&amp;body=I'd%20like%20to%20take%20TN-04.%20My%20%24handle%3A%20">Claim TN-04</a></div>
+</article>
+<!-- /contracts:TERRORNODE -->
     </div>
     <p class="more">More TERRORNODE contracts open as these are merged: a shield erobot, positional sound, team-mode gamepad, accessibility settings and a browser smoke test.</p>
+  </section>
+
+  <section class="blk extra" aria-labelledby="moreH">
+    <h2 id="moreH">More contracts</h2>
+    <div class="cgrid" data-contracts="*"><!-- contracts:* --><!-- /contracts:* --></div>
   </section>
 
   <section class="blk" aria-labelledby="howH">
@@ -173,5 +190,6 @@ section.blk{margin-top:48px}
 </footer>
 <script src="https://unpkg.com/@bwalletx/connect@0.7.0/dist/bwalletx-connect.global.js" integrity="sha384-VkIrDOw3Hmv7qnytbLGT1hNz7DbJ3IJiI91HSOTqjWu146/hl1KINi4v/hPzTfvI" crossorigin="anonymous"></script>
 <script src="/bwx.js"></script>
+<script type="module" src="/contracts.js"></script>
 </body>
 </html>

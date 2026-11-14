@@ -1,0 +1,123 @@
+{
+  "about": "bJobsX house contracts: the one source for the home carousel, /contracts and /api/contracts. Edit here, then run `pnpm contracts` to refresh the static copies in index.html and contracts.html. status: open | taken | done. Text in `build` and `done` may use `backticks` for code. Every contract here is posted and paid by The Bitcoin Corporation Ltd. `room: true` shows a 'Talk about this contract' link (none yet).",
+  "updatedAt": "2026-11-14",
+  "contracts": [
+    {
+      "id": "tn-01",
+      "ref": "TN-01",
+      "version": "1",
+      "status": "open",
+            "scope": "TERRORNODE",
+      "kind": "Contract",
+      "title": "Level pack format and checker",
+      "line": "A data-only level pack for the minigun shooter, with a checker that rejects bad packs.",
+      "pay": "1 BSV",
+      "time": "About 1 hour with AI",
+      "art": "/media/terrornode-street.jpg",
+      "color": "#ff5a48",
+      "href": "/contracts#c01",
+      "go": "Apply for TN-01",
+      "detail": {
+        "anchor": "c01",
+        "area": "TOOLING",
+        "est": "About an hour with AI. Starts the level-pack work.",
+        "build": "A data-only level pack at `content/terrornode/levels/<slug>/level.json`, following the bRacer pack rules in `src/lib/content/schema.ts`: name, blurb, Kweg's line, act, palette, erobotz mix, licence and author. Add its checker to `pnpm content:check`, plus one example pack. The game doesn't load packs yet.",
+        "done": [
+          "The example pack passes `pnpm content:check`.",
+          "At least six bad packs fail with a clear message: bad slug, missing licence, a URL in a text field, a mix that doesn't add up to 1, an unknown palette, an act out of range. They run as tests under `pnpm test`.",
+          "`pnpm typecheck` and `pnpm lint` pass."
+        ],
+        "claim": { "label": "Claim TN-01", "href": "mailto:support@bwalletx.com?subject=Contract%20TN-01&body=I'd%20like%20to%20take%20TN-01.%20My%20%24handle%3A%20" }
+      }
+    },
+    {
+      "id": "tn-03",
+      "ref": "TN-03",
+      "version": "1",
+      "status": "open",
+            "scope": "TERRORNODE",
+      "kind": "Contract",
+      "title": "Drone swarm enemy",
+      "line": "A flock of flying erobot drones that circle and dive. Pooled, capped and shootable.",
+      "pay": "1 BSV",
+      "time": "About 1 hour with AI",
+      "art": "/media/terrornode-street.jpg",
+      "color": "#ff5a48",
+      "href": "/contracts#c03",
+      "go": "Apply for TN-03",
+      "detail": {
+        "anchor": "c03",
+        "area": "ENEMIES",
+        "est": "About an hour with AI. No other contract needed first.",
+        "build": "A new enemy: a small flock of flying erobot drones that circle and dive at the player. Pooled, so no new objects each frame, and each with a simple hit sphere so the minigun can knock them down. Off by default, switched on with `?drones=1`.",
+        "done": [
+          "With `?drones=1&dryrun=1`, a flock appears, dives, and drones fall when shot.",
+          "The pool has a cap in `tuning.ts`, halved on the phone render tier, with a test.",
+          "Without `?drones=1`, nothing changes. Typecheck, lint and tests pass."
+        ],
+        "claim": { "label": "Claim TN-03", "href": "mailto:support@bwalletx.com?subject=Contract%20TN-03&body=I'd%20like%20to%20take%20TN-03.%20My%20%24handle%3A%20" }
+      }
+    },
+    {
+      "id": "tn-04",
+      "ref": "TN-04",
+      "version": "1",
+      "status": "open",
+            "scope": "TERRORNODE",
+      "kind": "Contract",
+      "title": "Gamepad support",
+      "line": "Play a solo run with a standard gamepad: move, aim, fire and pause, with a dead zone.",
+      "pay": "1 BSV",
+      "time": "About 1 hour with AI",
+      "art": "/media/terrornode-street.jpg",
+      "color": "#ff5a48",
+      "href": "/contracts#c04",
+      "go": "Apply for TN-04",
+      "detail": {
+        "anchor": "c04",
+        "area": "INPUT",
+        "heading": "Gamepad support (solo)",
+        "est": "About an hour with AI. No other contract needed first.",
+        "build": "Standard Gamepad API support in solo play: move, aim, fire and pause, with a dead zone. Put the mapping in a pure module, `src/lib/terrornode/input.ts`, so it can be tested without a browser. Wire it into `ShootingGallery.tsx`.",
+        "done": [
+          "A gamepad plays a solo run in Chrome, and in Safari where the pad is supported.",
+          "Mapping and dead-zone tests run under `pnpm test`.",
+          "Keyboard, mouse and touch work exactly as before. Typecheck and lint pass."
+        ],
+        "claim": { "label": "Claim TN-04", "href": "mailto:support@bwalletx.com?subject=Contract%20TN-04&body=I'd%20like%20to%20take%20TN-04.%20My%20%24handle%3A%20" }
+      }
+    },
+    {
+      "id": "b-aware",
+      "ref": "B-AWARE",
+      "version": "1",
+      "status": "open",
+            "scope": "bWalletX",
+      "kind": "Security",
+      "title": "Security testing (b-Aware)",
+      "line": "Find a way to take funds, read keys or get past an approval in bWalletX or bChatX.",
+      "pay": "Up to 10 BSV",
+      "time": "Per valid report",
+      "ghost": "AWARE",
+      "color": "#ffd24d",
+      "href": "https://bwalletx.com/b-aware",
+      "go": "Read the b-Aware rules"
+    },
+    {
+      "id": "android",
+      "ref": "ANDROID",
+      "version": "1",
+      "status": "open",
+            "scope": "bWalletX",
+      "kind": "Testing",
+      "title": "Paid Android testing",
+      "line": "Use bWallet from the Google Play test every day for 14 days and tell us what breaks.",
+      "pay": "1 BSV",
+      "time": "14 days",
+      "ghost": "TEST",
+      "color": "#6ee09a",
+      "href": "https://bwalletx.com/testers",
+      "go": "Apply to test"
+    }
+  ]
+}
