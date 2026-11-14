@@ -9,6 +9,8 @@
 // - Connections (other people's data) are shown only to the owner, never published, and only minted (privately) when
 //   the owner ticks "Include my connections".
 // - Everything from the files or the server is escaped before it is put in the page.
+// - Link LinkedIn (wallet first): /api/linkedin/start signs in with LinkedIn and keeps only name, photo and "email
+//   verified", bound to this wallet. It shows on the owner's view; LinkedIn gives no job history (that's the import).
 import * as L from '/lib/linkedin.js';
 import * as R from '/mint/records.js';
 import { esc, ls, recordsN, txN, usd, satsText, doneKey, doneFor, loadCfg, pinCheck, liveBlock, friendly } from '/mint/core.js';
@@ -37,6 +39,25 @@ const done = () => doneFor(key());
 
 if (TEST) $('testbar').hidden = false;
 
+// ?linkedin=linked|signin|error&reason=… from /api/linkedin/*: one short line, then the URL is tidied.
+const LI_WORDS = {
+  linked: ['LinkedIn linked ✓', 'ok'],
+  signin: ['Connect your wallet first, then link LinkedIn.', ''],
+  cancelled: ['You cancelled on LinkedIn, so nothing changed.', ''],
+  expired: ['That took too long. Press Link LinkedIn again.', 'bad'],
+  session: ['Your wallet changed while you were on LinkedIn. Press Link LinkedIn again.', 'bad'],
+  off: ['LinkedIn sign-in is not switched on yet.', ''],
+  error: ['LinkedIn didn’t link. Try again.', 'bad'],
+};
+const liResult = (() => {
+  const q = new URLSearchParams(location.search), r = q.get('linkedin'), why = q.get('reason');
+  if (!r) return null;
+  q.delete('linkedin'); q.delete('reason');
+  history.replaceState(null, '', location.pathname + (q.size ? '?' + q : '') + location.hash);
+  const w = (k) => (Object.hasOwn(LI_WORDS, k) ? LI_WORDS[k] : null);
+  return r === 'error' ? (why !== 'linked' && why !== 'signin' && w(why)) || LI_WORDS.error : w(r);
+})();
+
 // ── load ──────────────────────────────────────────────────────────────────────
 async function load() {
   const p = await fetch(uname ? '/api/profile?name=' + encodeURIComponent(uname) : '/api/profile?me=1', { cache: 'no-store' })
@@ -48,6 +69,7 @@ async function load() {
   if (!p.ok || !p.j.page) {
     if (uname) { $('nf').hidden = false; $('nfTitle').textContent = 'That profile didn’t open.'; $('nfLede').textContent = 'Try again in a minute.'; return; }
     $('gate').hidden = false;
+    if (liResult) say($('gateMsg'), ...liResult);
     if (ls.get('bjx-import-guest')) startGuest();
     return;
   }
@@ -61,8 +83,10 @@ async function load() {
     const saved = ls.get(sectionsKey());
     sections = new Set(Array.isArray(saved) ? saved : publishedSections());
   }
+  if (mode === 'owner') $('importHome').append($('importBody')); // the import lives in its card once connected
   $('page').hidden = false;
   paint();
+  if (mode === 'owner' && liResult) say($('liMsg'), ...liResult);
   if (mode === 'owner') { account(); cfg = await loadCfg(); paintMint(); if (location.hash.slice(1)) openModal(location.hash.slice(1)); }
 }
 
@@ -95,7 +119,8 @@ function head() {
   const p = data?.profile, pub = pg.profile;
   const own = mode !== 'public';
   const importedName = p ? [p.firstName, p.lastName].filter(Boolean).join(' ') : '';
-  const name = (own ? importedName : pub?.name) || pg.displayName || pg.alias || (mode === 'guest' ? 'Your profile' : 'bJobsX profile');
+  const li = mode === 'owner' ? pg.linkedin : null;
+  const name = (own ? importedName || li?.name : pub?.name) || pg.displayName || pg.alias || (mode === 'guest' ? 'Your profile' : 'bJobsX profile');
   document.title = `${own ? 'Your profile' : name} · bJobsX`;
   $('kick').textContent = own ? (mode === 'guest' ? 'Your profile · on this device' : 'Your profile') : 'Profile';
   $('name').textContent = name;
@@ -104,7 +129,7 @@ function head() {
   $('handle').textContent = pg.paymail || (mode === 'guest' ? 'Connect bWalletX to get your link' : sk);
   $('mail').textContent = (own ? p?.headline : pub?.headline) || '';
   if (!pg.paymail && mode === 'owner') $('mail').insertAdjacentHTML('beforeend', ' <a href="https://bwalletx.com/get" target="_blank" rel="noopener">Get your name</a>');
-  setAvatar(pg.avatar, name);
+  setAvatar(li?.picture || pg.avatar, name);
   if (pg.username && mode !== 'guest') {
     $('linkRow').hidden = false; $('pubLink').textContent = 'bjobsx.com/u/' + pg.username;
     $('copyLink').onclick = async () => { try { await navigator.clipboard.writeText('https://bjobsx.com/u/' + pg.username); $('copyLink').textContent = 'Copied'; } catch { $('copyLink').textContent = 'Copy failed'; } setTimeout(() => { $('copyLink').textContent = 'Copy link'; }, 1600); };
@@ -141,6 +166,8 @@ function paint() {
   head();
   const own = mode !== 'public';
   $('owner3').hidden = !own; $('ownerLinks').hidden = !own; $('pubLinks').hidden = own;
+  $('duo').hidden = mode !== 'owner';
+  if (mode === 'owner') paintLinkedIn();
   $('unameChip').hidden = mode === 'guest';
   $('st1').classList.toggle('done', mode === 'owner');
   $('st1b').textContent = mode === 'owner' ? 'Wallet connected' : 'Connect bWalletX';
@@ -148,8 +175,10 @@ function paint() {
   if (own) {
     const c = data ? L.counts(data) : null;
     $('st2').classList.toggle('done', !!data);
-    $('st2s').textContent = c ? `${c.positions} positions · ${c.education} schools · ${c.skills} skills` : 'Not imported yet';
-    if (!data) {
+    $('st2s').textContent = [mode === 'owner' && pg.linkedin ? 'LinkedIn linked' : '', c ? `${c.positions} positions · ${c.education} schools · ${c.skills} skills` : 'Not imported yet'].filter(Boolean).join(' · ');
+    if (!data && mode === 'owner') {
+      $('profile').innerHTML = '<section class="panel"><p class="mute" style="margin:0">Your profile sections appear here after you import your history. Everything stays private until you choose.</p></section>';
+    } else if (!data) {
       $('profile').innerHTML = `<section class="panel"><h2>Bring in your LinkedIn data</h2><p class="mute">Your profile fills in from the export LinkedIn gives you. Everything stays private until you choose.</p><div class="row2"><button class="btn btn-gold" type="button" data-open="import">Import LinkedIn</button><button class="btn btn-ghost" type="button" data-walk>How to get the export</button></div></section>`;
     } else {
       $('profile').innerHTML = sectionsHtml(viewOf(data), () => true) || '<section class="panel"><p class="mute">That import had no profile sections. Try the full ZIP.</p></section>';
@@ -253,6 +282,45 @@ function account() {
   };
 }
 
+// ── Link LinkedIn ────────────────────────────────────────────────────────────
+const dateText = (iso) => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); };
+function paintLinkedIn() {
+  const li = pg.linkedin, on = !!pg.linkedinOn, b = $('liBody');
+  if (li) {
+    const pic = safeUrl(li.picture), init = esc((li.name || 'L').trim().charAt(0).toUpperCase());
+    b.innerHTML = `<div class="li-who"><span class="li-av${pic ? '' : ' init'}" role="img" aria-label="${esc(li.name)} on LinkedIn"${pic ? ` style="background-image:url('${esc(pic)}')"` : ''}>${pic ? '' : init}</span>`
+      + `<div style="min-width:0"><p class="nm">Linked as ${esc(li.name)}</p><p class="meta">${li.emailVerified ? '<span class="ok-t">✓ Verified email</span>' : 'Email not verified on LinkedIn'}${li.linkedAt ? ' · ' + esc(dateText(li.linkedAt)) : ''}</p></div></div>`
+      + `<p class="hint">Only you see this for now. The LinkedIn ✓ on your public page is coming.</p>`
+      + `<div class="li-act" style="margin-top:14px"><button class="btn btn-ghost" type="button" id="liUnlink">Unlink</button></div>`;
+    $('liUnlink').onclick = unlinkLinkedIn;
+  } else {
+    b.innerHTML = `<div class="li-act">${on ? '<a class="btn btn-gold" id="liGo" href="/api/linkedin/start">Link LinkedIn</a>'
+      : '<button class="btn btn-gold" type="button" disabled aria-describedby="liSoon">Link LinkedIn</button><span class="badge coming" id="liSoon">Coming soon</span>'}</div>`
+      + '<p class="hint">LinkedIn shares your name, photo and whether your email is verified. Not your job history: import that alongside.</p>';
+    if (on) $('liGo').onclick = (e) => {
+      const a = e.currentTarget;
+      if (a.classList.contains('busy')) return e.preventDefault();
+      a.classList.add('busy'); a.textContent = 'Opening LinkedIn…'; $('liCard').setAttribute('aria-busy', 'true'); say($('liMsg'), '');
+    };
+  }
+}
+async function unlinkLinkedIn(e) {
+  const btn = e.currentTarget;
+  btn.disabled = true; btn.classList.add('busy'); btn.textContent = 'Unlinking…'; $('liCard').setAttribute('aria-busy', 'true');
+  try {
+    const r = await fetch('/api/linkedin/unlink', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error || 'That didn’t unlink. Try again.');
+    pg.linkedin = null; paint(); say($('liMsg'), 'Unlinked. Link it again any time.', 'ok');
+  } catch (er) {
+    btn.disabled = false; btn.classList.remove('busy'); btn.textContent = 'Unlink';
+    say($('liMsg'), er?.message || 'That didn’t unlink. Try again.', 'bad');
+  }
+  $('liCard').setAttribute('aria-busy', 'false');
+}
+// Back from LinkedIn with the browser's back button: the page comes from the cache with "Opening LinkedIn…" still on.
+window.addEventListener('pageshow', (e) => { if (e.persisted && mode === 'owner') { $('liCard').setAttribute('aria-busy', 'false'); paintLinkedIn(); } });
+
 // ── import (in the browser only) ─────────────────────────────────────────────
 async function importFiles(files) {
   const msg = $('iMsg');
@@ -292,6 +360,7 @@ const drop = $('drop');
 drop.addEventListener('drop', (e) => importFiles(e.dataTransfer?.files || []));
 drop.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('file').click(); } });
 drop.tabIndex = 0;
+$('iSee').onclick = () => { if ($('import').open) $('import').close(); $('profile').scrollIntoView({ behavior: 'smooth' }); };
 $('iClear').onclick = () => { ls.del(importKey()); data = null; $('counts').innerHTML = ''; $('iDone').hidden = true; say($('iMsg'), 'Removed from this browser.'); paint(); };
 
 // ── mint ─────────────────────────────────────────────────────────────────────
@@ -447,6 +516,7 @@ function openModal(id) {
   if (id === 'mint') { if (!data) id = 'import'; else { $('mint').scrollIntoView({ behavior: 'smooth' }); return; } }
   if (!MODALS.includes(id)) return;
   if (id === 'import' && !mode) startGuest();
+  if (id === 'import' && mode === 'owner') { $('importCard').scrollIntoView({ behavior: 'smooth', block: 'center' }); $('drop').focus({ preventScroll: true }); return; }
   if (id === 'account' && mode !== 'owner') return;
   MODALS.forEach((m) => { const d = $(m); if (d.open && m !== id) d.close(); });
   const d = $(id); if (!d.open) d.showModal();
