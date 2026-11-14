@@ -2,9 +2,11 @@
 // GET /api/profile?me=1             -> the signed-in wallet's own profile page data
 //   -> { page: {paymail, alias, displayName, avatar, username, usernameSaved, profile, updatedAt, settingsLive}, isOwner, signedIn }
 // The identity key is returned only to its owner (so the page can check the wallet in the browser is the same one).
+// The owner also gets `linkedin` (their LinkedIn link, or null) and `linkedinOn` (LinkedIn sign-in is switched on).
 import { readCookie, verifySession } from '@bwalletx/connect/server';
 import { secret } from './bwalletx/_auth.js';
 import { loadProfile, NAME_RE } from './_lib.js';
+import { linkFor, linkedinOn } from './linkedin/_li.js';
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
@@ -12,7 +14,7 @@ export default async function handler(req, res) {
   const me = s ? (await verifySession(readCookie(req.headers.cookie, 'bwx_session'), { secret: s }))?.sub || null : null;
   let page = null;
   if (req.query?.me) {
-    if (!me) return res.status(200).json({ page: null, signedIn: false, isOwner: false, signInOn: !!s });
+    if (!me) return res.status(200).json({ page: null, signedIn: false, isOwner: false, signInOn: !!s, linkedinOn: linkedinOn() });
     page = await loadProfile({ identityKey: me });
   } else {
     const name = String(req.query?.name || '').toLowerCase().replace(/^[$@]/, '');
@@ -22,5 +24,6 @@ export default async function handler(req, res) {
   }
   const isOwner = !!(me && page && page.identityKey === me);
   if (!isOwner) delete page.identityKey;
+  if (isOwner) Object.assign(page, { linkedin: linkFor(req.headers.cookie, me), linkedinOn: linkedinOn() });
   return res.status(200).json({ page, signedIn: !!me, isOwner });
 }

@@ -11,17 +11,18 @@ export const secret = () => {
   const s = process.env.BWALLETX_SESSION_SECRET || '';
   return s.length >= 32 ? s : null;
 };
-const key = (s) => createHash('sha256').update('bjobsx bwalletx ticket\n' + s).digest();
+// `label` keeps each use apart: a sealed ticket can't be replayed as a LinkedIn state, and so on.
+const key = (s, label = 'bjobsx bwalletx ticket') => createHash('sha256').update(label + '\n' + s).digest();
 
-export function seal(s, data) {
-  const iv = randomBytes(12), c = createCipheriv('aes-256-gcm', key(s), iv);
+export function seal(s, data, label) {
+  const iv = randomBytes(12), c = createCipheriv('aes-256-gcm', key(s, label), iv);
   const body = Buffer.concat([c.update(JSON.stringify(data), 'utf8'), c.final()]);
   return Buffer.concat([iv, c.getAuthTag(), body]).toString('base64url');
 }
-export function open(s, ticket) {
+export function open(s, ticket, label) {
   try {
     const b = Buffer.from(String(ticket), 'base64url');
-    const d = createDecipheriv('aes-256-gcm', key(s), b.subarray(0, 12));
+    const d = createDecipheriv('aes-256-gcm', key(s, label), b.subarray(0, 12));
     d.setAuthTag(b.subarray(12, 28));
     return JSON.parse(Buffer.concat([d.update(b.subarray(28)), d.final()]).toString('utf8'));
   } catch { return null; }
