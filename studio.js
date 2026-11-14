@@ -119,7 +119,7 @@ const panel = (s, title, body) => `<section class="panel sec" aria-label="${esc(
 /** Section bodies from a view {name, headline, location, industry, summary, websites, positions, education, skills, certifications}. */
 function sectionsHtml(v, show) {
   const out = [];
-  if (show('intro') && (v.name || v.headline)) out.push(panel('intro', 'Name and headline', `<p style="margin:0;font:700 20px 'Space Grotesk';overflow-wrap:anywhere">${esc(v.name || '')}</p><p class="mute" style="margin:4px 0 0;overflow-wrap:anywhere">${esc(v.headline || '')}</p>`));
+  if (show('intro') && (v.name || v.headline)) out.push(panel('intro', 'Name and headline', `<p style="margin:0;font:700 20px 'Space Grotesk',system-ui,sans-serif;overflow-wrap:anywhere">${esc(v.name || '')}</p><p class="mute" style="margin:4px 0 0;overflow-wrap:anywhere">${esc(v.headline || '')}</p>`));
   if (show('about') && (v.summary || v.location || v.industry || v.websites?.length)) {
     const facts = [v.location && `<span>${esc(v.location)}</span>`, v.industry && `<span>${esc(v.industry)}</span>`,
       ...(v.websites || []).map((u) => (safeUrl(u) ? `<a href="${esc(u)}" rel="nofollow ugc noopener" target="_blank">${esc(u.replace(/^https:\/\//, '').replace(/\/$/, ''))}</a>` : ''))].filter(Boolean).join('');

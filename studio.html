@@ -17,13 +17,13 @@
 main{padding-bottom:40px}
 .me{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:center;padding:22px 0 4px}
 .av{width:84px;height:84px;border-radius:50%;background:#111 center/cover;border:2px solid var(--gold);flex:none}
-.av.init{display:grid;place-items:center;background:radial-gradient(circle at 30% 25%,#ffe08a,#d4af37 45%,#7a5a12);color:#0b0b0b;font:700 36px 'Space Grotesk'}
+.av.init{display:grid;place-items:center;background:radial-gradient(circle at 30% 25%,#ffe08a,#d4af37 45%,#7a5a12);color:#0b0b0b;font:700 36px 'Space Grotesk',system-ui,sans-serif}
 .me h1{font-size:clamp(30px,6vw,52px);overflow-wrap:anywhere}
-.handle{font:600 18px 'Space Grotesk';color:var(--gold);margin:6px 0 0;overflow-wrap:anywhere}
+.handle{font:600 18px 'Space Grotesk',system-ui,sans-serif;color:var(--gold);margin:6px 0 0;overflow-wrap:anywhere}
 .mail{color:var(--mute);font-size:15px;margin:2px 0 0;overflow-wrap:anywhere}
 .link{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px;font-size:14px}
 .link code{font:500 14px 'IBM Plex Sans';color:var(--ink);background:#000;border:1px solid var(--line);border-radius:999px;padding:6px 12px;overflow-wrap:anywhere}
-.chip{background:none;border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:7px 13px;font:600 13px 'Space Grotesk';cursor:pointer;text-decoration:none}.chip:hover{border-color:var(--gold)}
+.chip{background:none;border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:7px 13px;font:600 13px 'Space Grotesk',system-ui,sans-serif;cursor:pointer;text-decoration:none}.chip:hover{border-color:var(--gold)}
 .row2{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;align-items:center}
 @media(max-width:760px){.me{grid-template-columns:1fr}.av{width:72px;height:72px}}
 .center{text-align:center;max-width:640px;margin:56px auto 0}
@@ -34,7 +34,7 @@ main{padding-bottom:40px}
 .sec{margin-top:16px}
 .sec-h{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
 .sec-h h2{margin:0}
-.vis{display:inline-flex;align-items:center;gap:10px;font:600 14px 'Space Grotesk';color:var(--mute);cursor:pointer;user-select:none;border:1px solid var(--line);border-radius:999px;padding:6px 12px 6px 8px}
+.vis{display:inline-flex;align-items:center;gap:10px;font:600 14px 'Space Grotesk',system-ui,sans-serif;color:var(--mute);cursor:pointer;user-select:none;border:1px solid var(--line);border-radius:999px;padding:6px 12px 6px 8px}
 .vis input{appearance:none;width:38px;height:22px;border-radius:99px;background:#222;position:relative;cursor:pointer;margin:0;transition:background .15s}
 .vis input::after{content:"";position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#888;transition:transform .15s,background .15s}
 .vis input:checked{background:rgba(255,210,77,.35)}.vis input:checked::after{transform:translateX(16px);background:var(--gold)}
@@ -42,7 +42,7 @@ main{padding-bottom:40px}
 .tl{list-style:none;margin:0;padding:0 0 0 18px;border-left:2px solid rgba(255,210,77,.35)}
 .tl li{position:relative;padding:0 0 18px 14px}
 .tl li::before{content:"";position:absolute;left:-25px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px #0b0b0c}
-.tl b{display:block;font:600 17px 'Space Grotesk';overflow-wrap:anywhere}
+.tl b{display:block;font:600 17px 'Space Grotesk',system-ui,sans-serif;overflow-wrap:anywhere}
 .tl .at{color:#e6e1d3;overflow-wrap:anywhere}
 .tl .when{font-size:13px;color:var(--mute)}
 .tl p{margin:6px 0 0;color:#cfcabd;font-size:15px;white-space:pre-line;overflow-wrap:anywhere}
@@ -60,22 +60,22 @@ main{padding-bottom:40px}
 /* import */
 .drop{display:grid;place-items:center;text-align:center;border:2px dashed rgba(255,210,77,.4);border-radius:18px;padding:26px 14px;margin-top:12px;cursor:pointer;background:#070708}
 .drop.over{border-color:var(--gold);background:#100e06}
-.drop b{font:700 18px 'Space Grotesk';display:block}
+.drop b{font:700 18px 'Space Grotesk',system-ui,sans-serif;display:block}
 .counts{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-top:12px}
 .counts div{border:1px solid var(--line);border-radius:12px;padding:10px 12px}
-.counts b{display:block;font:700 22px 'Space Grotesk';color:var(--gold)}
+.counts b{display:block;font:700 22px 'Space Grotesk',system-ui,sans-serif;color:var(--gold)}
 .counts span{font-size:13px;color:var(--mute)}
 /* mint */
 .items{display:grid;gap:8px;margin-top:10px}
 .it{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;border:1px solid #1d1d1d;border-radius:14px;padding:10px 12px;background:#070708}
 .it.sel{border-color:var(--gold)}
 .it input{width:22px;height:22px;accent-color:#ffd24d;margin:0}
-.it .t{font:600 15px 'Space Grotesk';overflow-wrap:anywhere}
+.it .t{font:600 15px 'Space Grotesk',system-ui,sans-serif;overflow-wrap:anywhere}
 .it .k{font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.1em}
-.seal{font:700 10px 'Space Grotesk';letter-spacing:.1em;background:linear-gradient(180deg,#ffe58a,#ffd24d 55%,#e0a800);color:#000;border-radius:99px;padding:3px 8px}
+.seal{font:700 10px 'Space Grotesk',system-ui,sans-serif;letter-spacing:.1em;background:linear-gradient(180deg,#ffe58a,#ffd24d 55%,#e0a800);color:#000;border-radius:99px;padding:3px 8px}
 .tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--line);padding:14px 0 0;margin-top:14px}
 .cost{flex:1 1 220px;min-width:0}
-.cost .usd{display:block;font:700 34px/1 'Space Grotesk';color:var(--gold)}
+.cost .usd{display:block;font:700 34px/1 'Space Grotesk',system-ui,sans-serif;color:var(--gold)}
 .cost .sats{font-size:13px;color:var(--mute)}
 .optin{display:flex;gap:10px;align-items:flex-start;margin-top:12px;font-size:14px;color:#cfcabd;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
 .optin input{width:20px;height:20px;accent-color:#ffd24d;margin:2px 0 0;flex:none}
@@ -87,7 +87,7 @@ main{padding-bottom:40px}
 .field input[aria-invalid=true]{border-color:#ff8a7a}
 .ask{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:16px;background:rgba(0,0,0,.75)}
 .ask>div{max-width:420px;width:100%;background:#0d0d0f;border:1px solid rgba(255,210,77,.35);border-radius:16px;padding:22px}
-.ask h3{margin:0 0 8px;color:var(--gold);font:700 19px 'Space Grotesk'}.ask p{margin:0 0 18px;color:#c9c4b5;font-size:15px}
+.ask h3{margin:0 0 8px;color:var(--gold);font:700 19px 'Space Grotesk',system-ui,sans-serif}.ask p{margin:0 0 18px;color:#c9c4b5;font-size:15px}
 .ask .row{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
 </style>
 </head>
@@ -152,7 +152,7 @@ main{padding-bottom:40px}
     <section class="panel" id="connPanel" hidden aria-labelledby="cH">
       <div class="sec-h"><h2 id="cH">Connections <span class="badge coming">Only you</span></h2></div>
       <p class="private">These are other people's details. Only you see them, on this device. They are never published. You can mint them privately below if you choose.</p>
-      <details><summary class="gold" style="cursor:pointer;font:600 14px 'Space Grotesk'" id="cSum">Show</summary><table class="conn"><tbody id="cList"></tbody></table><p class="hint" id="cMore"></p></details>
+      <details><summary class="gold" style="cursor:pointer;font:600 14px 'Space Grotesk',system-ui,sans-serif" id="cSum">Show</summary><table class="conn"><tbody id="cList"></tbody></table><p class="hint" id="cMore"></p></details>
     </section>
 
     <section class="panel" id="mint" hidden aria-labelledby="mH">
@@ -168,7 +168,7 @@ main{padding-bottom:40px}
         <p class="msg" id="mintMsg" aria-live="polite" style="flex:1 1 100%;margin:0"></p>
         <p class="msg bad" id="mintErr" aria-live="assertive" style="flex:1 1 100%;margin:0"></p>
       </div>
-      <h3 style="font:700 18px 'Space Grotesk';margin:22px 0 4px">Your minted records</h3>
+      <h3 style="font:700 18px 'Space Grotesk',system-ui,sans-serif;margin:22px 0 4px">Your minted records</h3>
       <div id="minted"><p class="mute">Open them with your wallet. <button class="chip" type="button" id="openBtn">Open my records</button></p></div>
     </section>
   </section>

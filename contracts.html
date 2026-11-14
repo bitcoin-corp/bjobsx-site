@@ -10,6 +10,7 @@
 <meta property="og:title" content="Contracts · bJobsX"><meta property="og:description" content="Small, paid contracts on our open-source games, paid in BSV.">
 <meta property="og:image" content="https://bjobsx.com/og-bjobsx-v3.png"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://bjobsx.com/og-bjobsx-v3.png">
 <meta name="theme-color" content="#000000"><link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/site.css">
 <style>
@@ -17,7 +18,7 @@
 .hero h1{font-size:clamp(34px,7vw,60px);margin-bottom:12px;max-width:16ch}
 .lede{font-size:clamp(17px,2.2vw,19px);color:#d8d3c5;max-width:640px;margin:0}
 .facts{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;padding:0;list-style:none}
-.facts li{border:1px solid var(--line);border-radius:999px;padding:5px 12px;font:600 13px 'Space Grotesk';color:#e9e4d6}
+.facts li{border:1px solid var(--line);border-radius:999px;padding:5px 12px;font:600 13px 'Space Grotesk',system-ui,sans-serif;color:#e9e4d6}
 .facts b{color:var(--gold)}
 section.blk{margin-top:48px}
 .game{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center}
@@ -27,11 +28,11 @@ section.blk{margin-top:48px}
 @media(max-width:960px){.cgrid{grid-template-columns:1fr}}
 .contract{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;min-width:0}
 .contract .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
-.contract .id{font:600 12px 'Space Grotesk';letter-spacing:.14em;color:var(--mute)}
-.contract .pay{font:700 15px 'Space Grotesk';color:var(--gold);white-space:nowrap}
-.contract h3{font:700 21px/1.2 'Space Grotesk';margin:6px 0 4px}
+.contract .id{font:600 12px 'Space Grotesk',system-ui,sans-serif;letter-spacing:.14em;color:var(--mute)}
+.contract .pay{font:700 15px 'Space Grotesk',system-ui,sans-serif;color:var(--gold);white-space:nowrap}
+.contract h3{font:700 21px/1.2 'Space Grotesk',system-ui,sans-serif;margin:6px 0 4px}
 .contract .est{font-size:13px;color:var(--mute);margin:0 0 12px}
-.contract h4{font:600 12px 'Space Grotesk';letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin:14px 0 6px}
+.contract h4{font:600 12px 'Space Grotesk',system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin:14px 0 6px}
 .contract p,.contract li{font-size:15px;color:#d8d3c5;margin:0}
 .contract ul{margin:0;padding-left:18px;display:grid;gap:4px}
 .contract code,.steps code,.rules code{background:#16161a;border-radius:6px;padding:1px 6px;font-size:13px;overflow-wrap:anywhere}
@@ -42,13 +43,13 @@ section.blk{margin-top:48px}
 @media(max-width:960px){.steps{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.steps{grid-template-columns:1fr}}
 .steps li{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;counter-increment:s;min-width:0}
-.steps li::before{content:counter(s);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:linear-gradient(180deg,#ffe58a,#ffd24d 55%,#e0a800);color:#000;font:700 15px 'Space Grotesk';margin-bottom:10px}
-.steps b{display:block;font:700 17px 'Space Grotesk';margin-bottom:4px}
+.steps li::before{content:counter(s);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:linear-gradient(180deg,#ffe58a,#ffd24d 55%,#e0a800);color:#000;font:700 15px 'Space Grotesk',system-ui,sans-serif;margin-bottom:10px}
+.steps b{display:block;font:700 17px 'Space Grotesk',system-ui,sans-serif;margin-bottom:4px}
 .steps span{font-size:15px;color:#cfcabd}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:860px){.two{grid-template-columns:1fr}}
 .two .panel{margin:0}
-.two h3{font:700 19px 'Space Grotesk';margin:0 0 8px}
+.two h3{font:700 19px 'Space Grotesk',system-ui,sans-serif;margin:0 0 8px}
 .rules{margin:0;padding-left:18px;display:grid;gap:6px;color:#d8d3c5;font-size:15px}
 </style>
 </head>
