@@ -87,31 +87,38 @@
     return modal.querySelector('.bwx-card');
   };
 
+  // The family connect (connector 0.7.0): find every wallet, use the one in this browser when there's exactly one,
+  // otherwise the chooser (bWalletX first, other BRC-100 wallets, Metanet Desktop on tap, the phone QR last).
   async function connect(toStudio) {
     let ticket = null;
+    const pairing = C.pairingModal();
     try {
+      const list = await C.discoverWallets({ pairing });
+      const choice = C.decideWallet(list, { remembered: C.rememberedWalletChoice() });
+      const opt = choice.option || await C.chooseWallet(list);
+      if (!opt) { pairing.close(); return; }
+      const cw = await opt.connect({ identity: false });
+      if (!cw.wallet) throw new Error('That wallet can’t sign in here. Use bWalletX or another BRC-100 wallet.');
+      C.rememberWalletChoice(opt);
       const r = await C.signInWithBwalletX({
-        challenge: async (identityKey) => { const ch = await post('/api/bwalletx/challenge', { identityKey }); ticket = ch.ticket; return ch; },
-        pairing: {
-          onLink: (link) => {
-            let qr = '';
-            if (window.qrcode) { const q = window.qrcode(0, 'M'); q.addData(link); q.make(); qr = q.createSvgTag({ cellSize: 4, margin: 0 }); }
-            const card = show(`<h3>Connect bWalletX</h3><p>Scan with the bWalletX app on your phone, or paste the link into <a href="https://web.bwalletx.com" target="_blank" rel="noopener" style="color:#ffd24d">web.bwalletx.com</a>.</p><div class="bwx-qr">${qr}</div><div class="bwx-link" title="Click to copy">${esc(link)}</div><p id="bwxCode" style="margin:12px 0 0"></p>`);
-            card.querySelector('.bwx-link').onclick = () => navigator.clipboard?.writeText(link);
-          },
-          onCode: (code) => { const el = document.getElementById('bwxCode'); if (el) el.innerHTML = `Check your wallet shows <span class="bwx-code">${esc(code)}</span>, then tap Connect.`; },
-        },
+        wallet: cw.wallet,
+        identityKey: cw.identityKey || C.rememberedIdentity(),
+        // Our routes run the 0.5.0 server helpers, which want the key before the challenge.
+        challengeNeedsIdentityKey: true,
+        challenge: async (identityKey) => { const ch = await post('/api/bwalletx/challenge', identityKey ? { identityKey } : {}); ticket = ch.ticket; return ch; },
       });
       const v = await post('/api/bwalletx/verify', { identityKey: r.identityKey, nonce: r.nonce, signature: r.signature, ticket });
+      pairing.close(); C.rememberIdentity(v.identityKey);
       wallet = r.wallet; close(); setKey(v.identityKey);
       document.dispatchEvent(new CustomEvent('bjobsx-wallet', { detail: { identityKey: key, fromNav: !!toStudio } }));
       // Connecting from the navbar (any page) opens your account page. The claim page's own step-3 button stays put.
       if (toStudio && !/^\/studio\/?$/.test(location.pathname)) location.assign('/studio');
     } catch (e) {
+      pairing.close();
       if (e && e.code === 'NOT_FOUND') {
         show(`<h3>No bWalletX found</h3><p>Get the bWalletX extension or app, or use the web wallet.</p><p><a class="bwx-btn on" href="https://bwalletx.com/get">Get bWalletX</a></p>`);
-      } else if (modal) {
-        modal.querySelector('.bwx-card').insertAdjacentHTML('beforeend', `<p style="color:#ff8a7a">${esc((e && e.message) || 'That didn’t work. Try again.')}</p>`);
+      } else if (e && /cancel|denied|reject/i.test(e.message || '')) {
+        show(`<h3>Cancelled</h3><p>Nothing was signed. Try again when you’re ready.</p>`);
       } else {
         show(`<h3>Couldn’t connect</h3><p style="color:#ff8a7a">${esc((e && e.message) || 'Try again.')}</p>`);
       }
@@ -119,7 +126,7 @@
   }
   async function disconnect() {
     await post('/api/bwalletx/session', {}).catch(() => {});
-    try { C.clearPairing?.(); } catch {}
+    try { C.clearPairing?.(); C.rememberIdentity(null); } catch {}
     // Tell the bWalletX extension this site disconnected, so it stops wearing the site's theme.
     try { window.postMessage({ type: 'bwallet:disconnect' }, location.origin); } catch {}
     wallet = null; setKey(null);
