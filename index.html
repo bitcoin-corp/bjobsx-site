@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>bJobsX · Your work history, in your own wallet</title>
-<meta name="description" content="Bring the data LinkedIn lets you export into your own bWalletX. Get a public profile page, choose what it shows, and mint any of it in your own name.">
+<title>bJobsX · Paid work, paid in Bitcoin</title>
+<meta name="description" content="Small paid contracts, paid in BSV to your own wallet. Your work history lives in your bWalletX, and organisations and tokens are coming next.">
 <link rel="canonical" href="https://bjobsx.com/">
 <meta property="og:type" content="website"><meta property="og:url" content="https://bjobsx.com/"><meta property="og:site_name" content="bJobsX">
 <meta property="og:title" content="bJobsX · Your work history, in your own wallet">
@@ -18,68 +18,86 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/site.css">
-<style>
-.hero{padding:44px 0 10px;position:relative}
-.hero::before{content:"";position:absolute;inset:-60px -16px auto;height:420px;background:radial-gradient(60% 70% at 30% 20%,rgba(255,210,77,.16),transparent 70%);pointer-events:none;z-index:-1}
-.hero h1{font-size:clamp(40px,8vw,84px);max-width:13ch}
-.hero h1 em{font-style:normal;background:linear-gradient(180deg,#ffe58a,#ffd24d 55%,#c98f00);-webkit-background-clip:text;background-clip:text;color:transparent}
-.lede{font-size:clamp(17px,2.2vw,20px);color:#d8d3c5;max-width:620px;margin:18px 0 22px}
-.cta{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.steps3 li{padding:18px}
-.steps3 .n{width:38px;height:38px;font-size:16px}
-.big3 b{font-size:18px}
-.cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:8px}
-.cols .panel{margin:0}
-.cols h3{font:700 19px 'Space Grotesk',system-ui,sans-serif;margin:0 0 6px}
-.cols p{margin:0;color:#cfcabd;font-size:15px}
-@media(max-width:860px){.cols{grid-template-columns:1fr}}
-section.blk{margin-top:54px}
-.status{max-width:760px}
-</style>
+<link rel="stylesheet" href="/home.css">
 </head>
 <body>
-<header class="wrap nav">
-  <a class="brand" href="/" aria-label="bJobsX home"><img src="/logo.svg" alt="" width="30" height="30"><span>bJobs<span class="gold">X</span></span></a>
-  <nav class="nav-links" aria-label="Main"><a href="/browse">Browse</a><a href="/contracts">Contracts</a><a href="https://bwalletx.com/jobs" title="Paid work on bWalletX">Jobs<span class="hide-s"> · Paid work</span></a><span data-bwx></span></nav>
+<header class="hd">
+  <div class="wrap nav">
+    <a class="brand" href="/" aria-label="bJobsX home"><img src="/logo.svg" alt="" width="28" height="28"><span class="beta">Beta</span></a>
+    <nav class="nav-links" aria-label="Main"><a href="/contracts">Jobs</a><a href="/browse">People</a><a class="hide-s" href="https://bwalletx.com/get">Get bWalletX</a><span data-bwx></span></nav>
+  </div>
 </header>
-<main class="wrap">
-  <section class="hero">
-    <p class="kicker">bJobsX <span class="badge live">Live</span></p>
-    <h1>Your work history, in <em>your own wallet.</em></h1>
-    <p class="lede">Bring the data LinkedIn lets you export into your bWalletX. Get a profile page that shows only what you choose, and mint any of it in your own name.</p>
-    <div class="cta"><span data-bwx="studio"></span><button class="btn btn-ghost" type="button" data-walk>How to get your LinkedIn export</button><a class="btn btn-ghost" href="https://www.bchatx.com/s/bjobs">Open the bJobs Board</a><a class="btn btn-ghost" href="/contracts">Paid contracts</a></div>
-    <ol class="steps3 big3" aria-label="Three steps">
-      <li><span class="n">1</span><div><b>Connect bWalletX</b><span class="s">Your $name opens your profile</span></div></li>
-      <li><span class="n">2</span><div><b>Import LinkedIn</b><span class="s">Read in your browser, never uploaded</span></div></li>
-      <li><span class="n">3</span><div><b>Mint</b><span class="s">Private records in your name, 1p each</span></div></li>
-    </ol>
-    <p class="hint" style="margin-top:14px">No wallet yet? <a class="gold" href="https://bwalletx.com/get">Get bWalletX</a>. It's free.</p>
-  </section>
 
-  <section class="blk" aria-labelledby="whyH">
-    <h2 id="whyH">Yours, not a platform's.</h2>
-    <div class="cols">
-      <div class="panel"><h3>Private by default</h3><p>Nothing is public until you tick it. Your page at <b>bjobsx.com/u/your-name</b> shows only the sections you choose.</p></div>
-      <div class="panel"><h3>Locked with your keys</h3><p>Each position, school or certificate you mint is encrypted by your wallet before it goes on chain. Only your 12 words open it.</p></div>
-      <div class="panel"><h3>Your file stays with you</h3><p>The LinkedIn ZIP is opened in your browser. It never reaches our server. Connections stay private to you, always.</p></div>
+<main>
+  <section class="top" aria-labelledby="topH">
+    <div class="ghost-cards" aria-hidden="true"></div>
+    <span class="ghost-word" aria-hidden="true">JOBS</span>
+    <div class="wrap top-in">
+      <a class="part" href="https://bwalletx.com/"><img src="/logo.svg" alt="" width="14" height="14"> Part of <b>bWalletX</b> <span aria-hidden="true">&rarr;</span></a>
+      <p class="eyebrow">Jobs · Contracts · Organisations</p>
+      <h1 id="topH" class="lockup"><img class="lk-b" src="/logo.svg" alt="" width="96" height="96"><span class="lk-n" aria-hidden="true">JobsX</span><span class="sr">bJobsX</span></h1>
+      <p class="lede">Small paid jobs, paid in BSV straight to your wallet. Your work history stays in your bWalletX, and soon anyone can start an organisation and give it a token.</p>
+      <div class="ctas">
+        <a class="btn btn-white" href="#jobs">See open jobs</a>
+        <a class="btn btn-ghost" href="#how">How bJobsX works</a>
+        <a class="btn btn-gold" href="https://bwalletx.com/get">Get bWalletX</a>
+      </div>
     </div>
   </section>
 
-  <section class="blk status" id="status" aria-labelledby="stH">
-    <h2 id="stH">What works today</h2>
-    <ul class="check" id="checklist"></ul>
+  <section class="jobs" id="jobs" aria-roledescription="carousel" aria-label="Open jobs">
+    <p class="kick">Open jobs</p>
+    <div class="flow" tabindex="0" aria-label="Open jobs. Use the left and right arrow keys.">
+      <button class="arrow prev" type="button" aria-label="Previous job">&larr;</button>
+      <button class="arrow next" type="button" aria-label="Next job">&rarr;</button>
+    </div>
+    <div class="info" aria-live="polite">
+      <h2 class="info-t"></h2>
+      <p class="info-l"></p>
+      <div class="info-m"></div>
+      <a class="btn btn-gold info-go" href="/contracts">See open jobs</a>
+      <p class="info-n" data-count></p>
+    </div>
+  </section>
+
+  <section class="wrap below" id="how" aria-labelledby="howH">
+    <div class="get">
+      <h2>New here? Get bWalletX first</h2>
+      <p>It's free. You sign in to bJobsX with it, and it's where you get paid.</p>
+      <a class="get-main" href="https://bwalletx.com/get"><img src="/logo.svg" alt="" width="34" height="34"><span><b>Get bWalletX</b><small>Free · your keys, your coins</small></span><span aria-hidden="true">&rarr;</span></a>
+      <div class="get-4">
+        <a href="https://bwalletx.com/iphone"><small>Get bWalletX for</small><b>iPhone</b></a>
+        <a href="https://bwalletx.com/android"><small>Get bWalletX for</small><b>Android</b></a>
+        <a href="https://bwalletx.com/extension"><small>Get bWalletX for</small><b>Chrome</b></a>
+        <a href="https://web.bwalletx.com/"><small>Use bWalletX on</small><b>the web</b></a>
+      </div>
+    </div>
+    <div class="whats">
+      <p class="kick left" id="howH">What's in bJobsX</p>
+      <div class="tiles">
+        <a class="tile" href="/contracts"><h3>Paid contracts <span class="badge live">Live</span></h3><p>Small jobs on our open-source apps and games. Do the work, open a pull request, and get paid in BSV when it's merged.</p><span class="more">See the contracts &rarr;</span></a>
+        <a class="tile" href="/studio"><h3>Your profile, in your wallet <span class="badge live">Live</span></h3><p>Bring in your LinkedIn history, choose what's public, and mint any of it in your own name. Private by default.</p><span class="more">Open your profile &rarr;</span></a>
+        <div class="tile"><h3>Organisations <span class="badge coming">Next</span></h3><p>Start an organisation, add its people and their roles, and post its jobs. Each applicant gets a private room to talk it through.</p></div>
+        <div class="tile"><h3>Tokens <span class="badge coming">Next</span></h3><p>Give your organisation, your project or yourself a token. Anyone can launch one.</p></div>
+      </div>
+    </div>
   </section>
 </main>
+
 <footer>
   bJobsX · part of the bWalletX family · THE BITCOIN CORPORATION LTD, company no. 16735102
-  <nav aria-label="Footer"><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/browse">Browse</a><a href="/contracts">Contracts</a><a href="https://bwalletx.com/jobs">Paid work</a><a href="https://www.bchatx.com/s/bjobs">The bJobs Board</a><a href="https://bwalletx.com/get">Get bWalletX</a></nav>
+  <nav aria-label="Footer"><a href="/contracts">Jobs</a><a href="/browse">People</a><a href="/studio">Your profile</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="https://www.bchatx.com/s/bjobs">The bJobs Board</a></nav>
 </footer>
+
+<script type="application/json" id="jobs-data">[
+  {"id":"tn-01","scope":"TERRORNODE","kind":"Contract","title":"Level pack format and checker","line":"A data-only level pack for the minigun shooter, with a checker that rejects bad packs.","pay":"1 BSV","time":"About 1 hour with AI","art":"https://tokenblaster.lol/arcade/gallery.jpg","color":"#ff5a48","href":"/contracts#c01","go":"Apply for TN-01"},
+  {"id":"tn-03","scope":"TERRORNODE","kind":"Contract","title":"Drone swarm enemy","line":"A flock of flying erobot drones that circle and dive. Pooled, capped and shootable.","pay":"1 BSV","time":"About 1 hour with AI","art":"https://tokenblaster.lol/arcade/gallery.jpg","color":"#ff5a48","href":"/contracts#c03","go":"Apply for TN-03"},
+  {"id":"tn-04","scope":"TERRORNODE","kind":"Contract","title":"Gamepad support","line":"Play a solo run with a standard gamepad: move, aim, fire and pause, with a dead zone.","pay":"1 BSV","time":"About 1 hour with AI","art":"https://tokenblaster.lol/arcade/gallery.jpg","color":"#ff5a48","href":"/contracts#c04","go":"Apply for TN-04"},
+  {"id":"b-aware","scope":"bWalletX","kind":"Security","title":"Security testing (b-Aware)","line":"Find a way to take funds, read keys or get past an approval in bWalletX or bChatX.","pay":"Up to 10 BSV","time":"Per valid report","ghost":"AWARE","color":"#ffd24d","href":"https://bwalletx.com/b-aware","go":"Read the b-Aware rules"},
+  {"id":"android","scope":"bWalletX","kind":"Testing","title":"Paid Android testing","line":"Use bWallet from the Google Play test every day for 14 days and tell us what breaks.","pay":"1 BSV","time":"14 days","ghost":"TEST","color":"#6ee09a","href":"https://bwalletx.com/testers","go":"Apply to test"}
+]</script>
+<script src="/home.js"></script>
 <script src="https://unpkg.com/@bwalletx/connect@0.7.0/dist/bwalletx-connect.global.js" integrity="sha384-VkIrDOw3Hmv7qnytbLGT1hNz7DbJ3IJiI91HSOTqjWu146/hl1KINi4v/hPzTfvI" crossorigin="anonymous"></script>
 <script src="/bwx.js"></script>
-<script src="/walk.js"></script>
-<script type="module">
-import { checklist } from '/status.js';
-checklist(document.getElementById('checklist'));
-</script>
 </body>
 </html>
