@@ -50,3 +50,5 @@ body>.xs-bar .xs-wrap{padding:0 16px}
 .xs-foot a{color:#cfcabd;text-decoration:none;padding:4px 0}
 .xs-foot a:hover{color:#fff;text-decoration:underline}
 .xs-foot p{margin:0}
+
+.legal .note{border:1px solid rgba(255,210,77,.35);background:rgba(255,210,77,.07);border-radius:12px;padding:12px 14px;margin:8px 0 18px}
