@@ -15,7 +15,7 @@ import { postHTML, hueFor, BCHATX } from '/lib/feed-view.js';
 
 const L = {
   feed: `${BCHATX}/feed`, board: `${BCHATX}/s/bjobs`, chat: `${BCHATX}/`,
-  msg: 'https://bmessagex.com/', git: 'https://bgitx.com/', wallet: 'https://bwalletx.com/',
+  msg: 'https://bmessagex.com/', git: 'https://www.bchatx.com/bgitx', wallet: 'https://bwalletx.com/',
   org: `${BCHATX}/room/new`, token: `${BCHATX}/tokenise`,
 };
 
