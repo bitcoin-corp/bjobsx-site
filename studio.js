@@ -216,7 +216,7 @@ function paintPubbar() {
     : `Public on chain now: ${names(live)}.${changed ? ` After publishing: ${names(want)}.` : ''}`;
   const tx = $('pubTx');
   tx.hidden = !(mode === 'owner' && pg.profileTxid);
-  if (!tx.hidden) tx.href = WOC_TX(pg.profileTxid);
+  if (!tx.hidden) { tx.href = WOC_TX(pg.profileTxid); tx.textContent = pg.profile ? 'See it on chain' : 'See the latest on chain'; }
   $('pubSave').textContent = want.length ? 'Publish' : live.length ? 'Make all private' : 'Publish';
   $('pubSave').disabled = busy || mode === 'guest' || !changed;
 }
@@ -270,7 +270,8 @@ $('pubSave').onclick = async () => {
     if (walletKey !== key()) throw new Error('The wallet in this browser is a different identity from the one signed in. Reconnect bWalletX.');
     cfg = cfg || await loadCfg();
     const cost = R.profileCost(json.length, cfg?.satPerKb || 100);
-    const price = [usd(cost.totalSats, cfg), satsText(cost.totalSats)].filter(Boolean).join(' · ');
+    const dollars = usd(cost.totalSats, cfg);
+    const price = satsText(cost.totalSats) + (dollars ? ` (${dollars})` : '');
     say(msg, '');
     const ok = profile
       ? await ask('Publish on chain?', `${want.map((s) => SECTION_NAMES[s]).join(', ')} go on the Bitcoin SV blockchain in clear, signed by your wallet. Anyone can read them, and it’s permanent: publishing again changes what bJobsX shows, but earlier versions stay on chain. Network fee about ${price}, paid from your wallet. No bJobsX charge.`, 'Publish')
