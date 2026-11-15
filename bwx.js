@@ -135,6 +135,10 @@
   // After a reload the session cookie says who you are, but bWalletX only wears this site's theme once the page has
   // talked to it. With an extension or in-app wallet, quietly ask for the identity key again (never pairs).
   const touch = async () => { try { const f = await C.discoverBwalletX?.(800); if (f && f.wallet) await f.wallet.getPublicKey({ identityKey: true }); } catch {} };
-  fetch('/api/bwalletx/session', { credentials: 'same-origin' }).then((r) => r.json()).then((j) => { setKey(j.identityKey || null); if (j.identityKey) touch(); }).catch(draw);
+  // bjx-in: a hint for the home page that this browser is signed in (it hides the landing while the session is checked).
+  const hint = (on) => { try { if (on) localStorage.setItem('bjx-in', '1'); else localStorage.removeItem('bjx-in'); } catch {} };
+  document.addEventListener('bjobsx-wallet', (e) => hint(!!e.detail?.identityKey));
+  window.bjxSignOut = disconnect;
+  fetch('/api/bwalletx/session', { credentials: 'same-origin' }).then((r) => r.json()).then((j) => { setKey(j.identityKey || null); hint(!!j.identityKey); if (j.identityKey) touch(); }).catch(draw);
   draw();
 })();

@@ -5,7 +5,7 @@
 // by id, so a contract that is added, changed or removed never moves you off the one you're looking at.
 // A contract that arrives while the page is open (or was posted in the last 3 days) gets a "New" chip.
 // For testing only: ?poll=5 polls every 5 s.
-import { esc, posterLine, posterShort, roomUrl, homeRows, statusLabel } from '/lib/contracts-view.js';
+import { esc, posterLine, posterShort, roomUrl, homeRows, statusLabel, tokenPayNote } from '/lib/contracts-view.js';
 
 const flow = document.querySelector('.flow');
 const info = document.querySelector('.info');
@@ -31,7 +31,7 @@ function cardHTML(j) {
   const flags = [isNew(j) ? '<span class="flag new">New</span>' : '', j.status !== 'open' ? `<span class="flag">${statusLabel(j.status)}</span>` : ''].join('');
   return `<div class="job-art">${j.art ? `<img src="${esc(j.art)}" alt="" loading="lazy" decoding="async" draggable="false">` : `<span class="job-ghost">${esc(j.ghost || '')}</span>`}</div>
     ${flags ? `<span class="job-flags">${flags}</span>` : ''}
-    <div class="job-body"><span class="chip"><i></i>${esc(j.scope)} · ${esc(j.kind)}</span><h3>${esc(j.title)}</h3><p>${esc(j.line)}</p>
+    <div class="job-body"><span class="chip"><i></i>${esc(j.scope)} · ${esc(j.kind)}</span><h3>${esc(j.title)}</h3><p>${esc(j.line)}</p>${tokenPayNote(j) ? `<p class="job-tok">${esc(tokenPayNote(j))}</p>` : ''}
     <div class="job-foot"><b>${esc(j.pay)}</b><span>${esc(posterShort(j))}</span></div></div>`;
 }
 
@@ -116,12 +116,15 @@ function show(k) {
   if (!j) {
     info.querySelector('.info-t').textContent = 'No open contracts right now';
     for (const s of ['.info-l', '.info-by', '.info-m', '[data-count]']) info.querySelector(s).textContent = '';
+    const tok = info.querySelector('.info-tok'); if (tok) tok.hidden = true;
     goEl.href = '/contracts'; goEl.textContent = 'See all contracts'; talk.hidden = true;
     return;
   }
   info.querySelector('.info-t').textContent = j.title;
   info.querySelector('.info-l').textContent = j.line;
   info.querySelector('.info-by').textContent = posterLine(j);
+  const tok = info.querySelector('.info-tok');
+  if (tok) { tok.textContent = tokenPayNote(j); tok.hidden = !tokenPayNote(j); }
   info.querySelector('.info-m').innerHTML = [j.status !== 'open' ? `<span>${statusLabel(j.status)}</span>` : '', `<span class="pay">${esc(j.pay)}</span>`, `<span>${esc(j.time)}</span>`, `<span>${esc(j.scope)}</span>`, `<span>${esc(j.kind)}</span>`].join('');
   goEl.href = j.href;
   goEl.textContent = j.status === 'open' ? j.go : `See ${j.ref}`;

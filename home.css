@@ -97,6 +97,8 @@
 .info-l{font-size:clamp(15px,1.4vw,17px);line-height:1.5;color:#b9b5aa;margin:0 0 8px}
 .info-by{font:500 14px/1.5 var(--xs-bf);color:#e9e4d6;margin:0 0 14px}
 .info-by:empty{display:none}
+.info-tok{font:500 13.5px/1.5 var(--xs-bf);color:#e9e4d6;margin:-8px auto 14px;max-width:520px;border-left:2px solid var(--gold);padding-left:8px;text-align:left;width:max-content}
+.job p.job-tok{font-size:12px;color:#e9e4d6;margin:-4px 0 8px;-webkit-line-clamp:2}
 .info-m{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:0 0 18px}
 .info-m span{font:600 12.5px var(--xs-hf);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:4px 11px;color:#e9e4d6}
 .info-m span.pay{border-color:rgba(255,210,77,.5);color:var(--gold)}

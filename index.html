@@ -20,8 +20,26 @@
 <link rel="stylesheet" href="/site.css">
 <link rel="stylesheet" href="/home.css">
 <link rel="preload" as="image" href="/media/terrornode-street.jpg">
+<style>html.bjx-wait,html.bjx-wait body{background:#000}html.bjx-wait body{visibility:hidden}html.bjx-app body>:not(#app){display:none!important}</style>
+<script>
+/* Signed in? Then "/" is the app home (app.js + app.css), same URL. The session cookie is HttpOnly, so the server
+   answers (GET /api/bwalletx/session). Only when this browser was signed in last time (the bjx-in hint, set by bwx.js)
+   is the landing hidden while we ask, for 1.5 s at most; then the landing shows. Signed out: the landing, as it is. */
+(function () {
+  var d = document.documentElement, hint = false;
+  try { hint = localStorage.getItem('bjx-in') === '1'; } catch (e) {}
+  if (hint) { d.classList.add('bjx-wait'); setTimeout(function () { d.classList.remove('bjx-wait'); }, 1500); }
+  fetch('/api/bwalletx/session', { credentials: 'same-origin', cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+    if (!j || !j.identityKey) { try { localStorage.removeItem('bjx-in'); } catch (e) {} d.classList.remove('bjx-wait'); return; }
+    try { localStorage.setItem('bjx-in', '1'); } catch (e) {}
+    var css = new Promise(function (ok) { var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = '/app.css'; l.onload = l.onerror = ok; document.head.appendChild(l); });
+    return Promise.all([import('/app.js'), css]).then(function (m) { return m[0].start(j.identityKey); });
+  }).catch(function () { d.classList.remove('bjx-wait'); });
+})();
+</script>
 </head>
 <body>
+<div id="app" hidden></div>
 <aside class="xs-strip" aria-label="bWalletX"><a href="https://bwalletx.com/"><svg viewBox="23 8 74 100" aria-hidden="true" focusable="false"><defs><linearGradient id="xs-sg" gradientUnits="userSpaceOnUse" x1="0" y1="12" x2="0" y2="105"><stop offset="0" stop-color="#FFE58A"/><stop offset=".55" stop-color="#FFD24D"/><stop offset="1" stop-color="#C98F00"/></linearGradient></defs><path fill="url(#xs-sg)" d="M45 12V72H27V30Z M27 72a33 33 0 1 1 66 0a33 33 0 1 1-66 0Z M45 72a15 15 0 1 0 30 0a15 15 0 1 0-30 0Z"/></svg><span>Part of <b>bWalletX</b></span><span class="xs-go" aria-hidden="true">&rarr;</span></a></aside>
 
 <main>
@@ -46,6 +64,7 @@
     <h2 class="info-t"></h2>
     <p class="info-l"></p>
     <p class="info-by"></p>
+    <p class="info-tok" hidden></p>
     <div class="info-m"></div>
     <div class="info-acts"><a class="xs-btn xs-gold info-go" href="/contracts">See open contracts</a><a class="xs-btn xs-ghost info-talk" href="#" hidden>Talk about this contract</a></div>
     <p class="info-n" data-count></p>
