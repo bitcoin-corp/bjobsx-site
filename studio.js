@@ -345,7 +345,8 @@ function paintLinkedIn() {
   } else {
     b.innerHTML = `<div class="li-act">${on ? '<a class="btn btn-gold" id="liGo" href="/api/linkedin/start">Link LinkedIn</a>'
       : '<button class="btn btn-gold" type="button" disabled aria-describedby="liSoon">Link LinkedIn</button><span class="badge coming" id="liSoon">Coming soon</span>'}</div>`
-      + '<p class="hint">LinkedIn shares your name, photo and whether your email is verified. Not your job history: import that alongside.</p>';
+      + '<p class="hint">LinkedIn shares your name, photo and whether your email is verified. Not your job history: import that alongside.</p>'
+      + '<p class="hint">Or link it in bWalletX (Settings › Identity), and every b*X site sees it. bJobsX picks it up on your next visit.</p>';
     if (on) $('liGo').onclick = (e) => {
       const a = e.currentTarget;
       if (a.classList.contains('busy')) return e.preventDefault();
