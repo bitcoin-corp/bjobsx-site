@@ -9,7 +9,7 @@
 //   /api/feed          bChatX's public open feed, proxied and cached
 //   /api/browse        public profiles (push server)
 //   this browser       records minted and your LinkedIn import (localStorage, written by /studio)
-// Posting happens on chain in bChatX (the composer opens it); messages live in bMessageX.
+// Public posts happen on chain in bChatX (the composer opens it); jobs are posted here, on /post; messages live in bMessageX.
 import { esc, posterLine, statusLabel, payNotes, hasShares, paysBsv, isTokenPay } from '/lib/contracts-view.js';
 import { postHTML, hueFor, BCHATX } from '/lib/feed-view.js';
 
@@ -17,6 +17,8 @@ const L = {
   feed: `${BCHATX}/feed`, board: `${BCHATX}/s/bjobs`, chat: `${BCHATX}/`,
   msg: 'https://bmessagex.com/', git: 'https://www.bchatx.com/bgitx', wallet: 'https://bwalletx.com/',
   org: `${BCHATX}/room/new`, token: `${BCHATX}/tokenise`,
+  // Jobs are posted on bJobsX itself (RB 15 Nov): never bChatX's /room/new, which is only for starting an organisation.
+  post: '/post', postEquity: '/post?pay=equity',
 };
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -47,7 +49,7 @@ const ico = (n, cls = 'ap-i') => `<svg class="${cls}" viewBox="0 0 24 24" fill="
 const B_MARK = '<svg viewBox="23 8 74 100" aria-hidden="true" focusable="false"><path fill="currentColor" d="M45 12V72H27V30Z M27 72a33 33 0 1 1 66 0a33 33 0 1 1-66 0Z M45 72a15 15 0 1 0 30 0a15 15 0 1 0-30 0Z"/></svg>';
 
 let me = { identityKey: '', name: '', paymail: '', avatar: '', headline: '', linkedin: false, username: '' };
-let contracts = [], people = null, postUrl = null, posts = null, filt = 'all';
+let contracts = [], people = null, posts = null, filt = 'all';
 // A plain filter: it only hides cards, never sorts or features them.
 const FILTERS = [['all', 'All'], ['bsv', 'Paid in BSV'], ['equity', 'Pays in equity (shares only)'], ['tokens', 'Paid in tokens']];
 const FILTER_FN = { bsv: paysBsv, equity: hasShares, tokens: isTokenPay };
@@ -88,6 +90,7 @@ function shell() {
       <span class="ap-div" aria-hidden="true"></span>
       <button class="ap-nav-i ap-org-b" type="button" data-goto-org>${ico('org')}<span>For organisations</span></button>
     </nav>
+    <a class="ap-btn ap-btn-gold ap-post" href="${L.post}">${ico('pen')}<span>Post a job</span></a>
     <div class="ap-pop ap-notes" id="ap-notes" role="dialog" aria-label="Notifications" hidden><b>Notifications</b><p>Coming. Until then, replies and mentions show in bChatX, and messages in bMessageX.</p></div>
     <div class="ap-menu" id="ap-menu" role="menu" aria-label="Me" hidden>
       <div class="ap-menu-me">${avatar('ap-av-m')}<div><b data-me-name></b><span data-me-pm></span></div></div>
@@ -122,8 +125,8 @@ function shell() {
     </section>
     <section class="ap-card ap-box ap-org" id="ap-org" tabindex="-1" aria-labelledby="ap-org-h">
       <h2 id="ap-org-h">${ico('org')} Build</h2>
-      <nav class="ap-links" aria-label="Build in bChatX and bGitX">
-        <a class="ap-lk ap-lk-1" href="${L.org}" target="_blank" rel="noopener">Offer equity for work${ARR}</a>
+      <nav class="ap-links" aria-label="Build: post work here, the rest in bChatX and bGitX">
+        <a class="ap-lk ap-lk-1" href="${L.postEquity}">Offer equity for work</a>
         <a class="ap-lk" href="${L.org}" target="_blank" rel="noopener">Start an organisation${ARR}</a>
         <a class="ap-lk" href="${L.token}" target="_blank" rel="noopener">Issue a token${ARR}</a>
         <a class="ap-lk" href="${L.org}" target="_blank" rel="noopener">Raise in a private deal room${ARR}</a>
@@ -141,7 +144,7 @@ function shell() {
         <a href="${L.feed}" target="_blank" rel="noopener">${ico('pen')}Write a post${ARR}</a>
         <a href="${L.board}" target="_blank" rel="noopener">${ico('room')}The bJobs Board${ARR}</a>
         <a href="/contracts">${ico('contracts')}All contracts</a>
-        <a data-post-contract href="#" hidden>${ico('contracts')}Post a contract</a>
+        <a class="ap-compose-post" href="${L.post}">${ico('contracts')}Post a job</a>
       </div>
     </section>
     <div class="ap-filt" role="group" aria-label="Filter the feed">${FILTERS.map(([k, t]) => `<button type="button" data-filt="${k}" aria-pressed="${k === 'all'}">${esc(t)}</button>`).join('')}</div>
@@ -168,7 +171,7 @@ function shell() {
       <a class="ap-more" href="/browse">See everyone &rarr;</a>
     </section>
     <div class="ap-foot">
-      <nav aria-label="Footer"><a href="/contracts">Contracts</a><a href="/browse">People</a><a href="/studio">Your profile</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></nav>
+      <nav aria-label="Footer"><a href="/contracts">Contracts</a><a href="/post">Post a job</a><a href="/browse">People</a><a href="/studio">Your profile</a><a href="/what-you-can-post">What you can post</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></nav>
       ${family()}
       <p>bJobsX · THE BITCOIN CORPORATION LTD, company no. 16735102</p>
     </div>
@@ -240,8 +243,6 @@ function paintContracts() {
   const shown = fn ? open.filter(fn) : open.slice(0, 2);
   $('[data-sep-c]').textContent = fn ? FILTERS.find(([k]) => k === filt)[1] : 'New contracts';
   stream.innerHTML = shown.length ? shown.map(contractCard).join('') : `<p class="ap-card ap-empty">${esc(fn ? FILTER_EMPTY[filt] : 'No open contracts right now.')} <a href="/contracts">See all contracts</a></p>`;
-  const post = $('[data-post-contract]');
-  if (post) { post.hidden = !postUrl; if (postUrl) { post.href = postUrl; post.target = '_blank'; post.rel = 'noopener'; } }
 }
 
 // ── feed ─────────────────────────────────────────────────────────────────────
@@ -372,7 +373,6 @@ export async function start(identityKey) {
   });
   const contractsP = json('/api/contracts').then((j) => {
     contracts = Array.isArray(j?.contracts) ? j.contracts : [];
-    postUrl = j?.postUrl || null;
     paintContracts();
   });
   json('/api/browse').then(paintPeople);

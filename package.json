@@ -5,7 +5,9 @@
   "scripts": {
     "test": "node --test test/*.test.mjs",
     "contracts": "node scripts/build-contracts.mjs",
-    "contracts:check": "node scripts/build-contracts.mjs --check"
+    "contracts:check": "node scripts/build-contracts.mjs --check",
+    "shell": "node scripts/build-shell.mjs",
+    "shell:check": "node scripts/build-shell.mjs --check"
   },
   "dependencies": {
     "@bsv/sdk": "2.8.10",

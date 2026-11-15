@@ -112,7 +112,8 @@
       wallet = r.wallet; close(); setKey(v.identityKey);
       document.dispatchEvent(new CustomEvent('bjobsx-wallet', { detail: { identityKey: key, fromNav: !!toStudio } }));
       // Connecting from the navbar (any page) opens your account page. The claim page's own step-3 button stays put.
-      if (toStudio && !/^\/studio\/?$/.test(location.pathname)) location.assign('/studio');
+      // Pages that keep you where you are (<body data-bwx-stay>, e.g. /post with a draft open) don't jump to /studio.
+      if (toStudio && !document.body.hasAttribute('data-bwx-stay') && !/^\/studio\/?$/.test(location.pathname)) location.assign('/studio');
     } catch (e) {
       pairing.close();
       if (e && e.code === 'NOT_FOUND') {

@@ -1,0 +1,22 @@
+/* One contract card, as lib/contracts-view.js renders it (contractArticle). Used on /contracts and in the /post preview. */
+.contract{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;min-width:0}
+.contract .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.contract .id{font:600 12px 'Space Grotesk',system-ui,sans-serif;letter-spacing:.14em;color:var(--mute)}
+.contract .pay{font:700 15px 'Space Grotesk',system-ui,sans-serif;color:var(--gold);white-space:nowrap}
+.contract h3{font:700 21px/1.2 'Space Grotesk',system-ui,sans-serif;margin:6px 0 4px}
+.contract .est{font-size:13px;color:var(--mute);margin:0 0 12px}
+.contract h4{font:600 12px 'Space Grotesk',system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin:14px 0 6px}
+.contract p,.contract li{font-size:15px;color:#d8d3c5;margin:0}
+.contract ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.contract code{background:#16161a;border-radius:6px;padding:1px 6px;font-size:13px;overflow-wrap:anywhere}
+.contract .claim{margin-top:auto;padding-top:18px}
+.contract .claim .btn{width:100%}
+.contract .by{font-size:13px;color:#cfcabd;margin:0 0 4px}
+.contract .by.other{color:#e9e4d6;border-left:2px solid var(--gold);padding-left:8px}
+.contract .badge.equity{color:var(--gold);border:1px solid rgba(255,210,77,.55)}
+.contract .by.token-pay{color:#e9e4d6;border-left:2px solid var(--gold);padding-left:8px}
+.contract .badge.state{margin-left:auto;background:rgba(255,255,255,.08);color:#e9e4d6}
+.contract.is-taken,.contract.is-done{opacity:.72}
+.contract .claim.shut{font:600 14px 'Space Grotesk',system-ui,sans-serif;color:var(--mute);margin:0}
+.contract .talk{margin:14px 0 0;font:600 14px 'Space Grotesk',system-ui,sans-serif}
+.contract.fresh{border-color:rgba(255,210,77,.6)}

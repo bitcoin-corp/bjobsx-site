@@ -46,6 +46,9 @@ html.bjx-app,html.bjx-app body{background:var(--ap-bg);color-scheme:dark}
 .ap-div{width:1px;background:var(--ap-line);margin:10px 6px}
 .ap-org-b{min-width:96px}
 .ap-me-m{display:none;background:none;border:0;padding:0;cursor:pointer;flex:none}
+/* Post a job (RB 15 Nov): gold, in the top bar on every width; it opens /post on bJobsX itself. */
+.ap-post{flex:none;margin-left:6px;min-height:38px;padding:0 16px}
+.ap-post svg{width:16px;height:16px;flex:none}
 .ap-pop,.ap-menu{position:absolute;top:58px;z-index:60;background:var(--ap-card2);border:1px solid rgba(255,210,77,.25);border-radius:14px;box-shadow:0 24px 60px -16px rgba(0,0,0,.9)}
 .ap-pop{right:190px;width:280px;padding:14px 16px}
 .ap-pop b{font:600 15px var(--ap-hf)}.ap-pop p{margin:6px 0 0;color:var(--ap-soft)}
@@ -126,10 +129,11 @@ html.bjx-app,html.bjx-app body{background:var(--ap-bg);color-scheme:dark}
 .ap-compose-b{flex:1;min-width:0;display:flex;align-items:center;height:46px;padding:0 18px;border-radius:999px;border:1px solid rgba(255,255,255,.16);color:var(--ap-soft)!important;font:500 15px var(--ap-hf);transition:border-color .15s,background .15s}
 .ap-compose-b:hover{border-color:rgba(255,210,77,.55);background:rgba(255,210,77,.04)}
 .ap-compose-n{margin:8px 0 0 56px;color:var(--ap-mute);font-size:12px}
-.ap-compose-a{display:flex;justify-content:space-around;flex-wrap:wrap;gap:4px;margin-top:6px;border-top:1px solid var(--ap-line);padding-top:4px}
+.ap-compose-a{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 4px;margin-top:6px;border-top:1px solid var(--ap-line);padding-top:4px}
 .ap-compose-a a{display:inline-flex;align-items:center;gap:7px;padding:9px 10px;border-radius:8px;font:600 13.5px var(--ap-hf);color:var(--ap-soft)!important}
 .ap-compose-a a:hover{background:rgba(255,255,255,.04);color:var(--ap-ink)!important}
 .ap-compose-a .ap-i{width:20px;height:20px;color:var(--ap-gold)}
+.ap-compose-a a.ap-compose-post{color:var(--ap-gold)!important}
 .ap-sep{display:flex;align-items:center;gap:10px;margin:6px 2px 0;font:600 11px var(--ap-hf);letter-spacing:.16em;text-transform:uppercase;color:var(--ap-gold)}
 .ap-sep::after{content:"";flex:1;height:1px;background:var(--ap-line);order:1}
 .ap-sep a{order:2;letter-spacing:.02em;text-transform:none;font-size:12.5px;color:var(--ap-mute)!important}
@@ -242,6 +246,8 @@ a.ap-pn:hover{color:var(--ap-gold);text-decoration:underline}
   .ap-me-m{display:flex}
   .ap-search{flex:1 1 auto}
   .ap-nav{display:none}
+  .ap-post{margin-left:0;min-height:36px;padding:0 13px;font-size:13.5px}
+  .ap-post svg{display:none}
   .ap-qres{left:-34px;width:calc(100vw - 32px)}
   .ap-grid{display:flex;flex-direction:column;align-items:stretch;gap:10px;margin-top:10px;padding:0 0 calc(76px + env(safe-area-inset-bottom))}
   .ap-left,.ap-right{display:contents}
@@ -263,8 +269,8 @@ a.ap-pn:hover{color:var(--ap-gold);text-decoration:underline}
   .ap-li{grid-column:2;margin:4px 0 0;justify-self:start}
   .ap-me-cta{grid-column:3;grid-row:1 / span 3;margin:0;padding:0;border:0}
   .ap-compose-n{margin-left:0}
-  .ap-compose-a{flex-wrap:nowrap;gap:2px}
-  .ap-compose-a a{flex:1 1 0;justify-content:center;padding:9px 2px;font-size:12.5px;gap:5px;min-width:0;white-space:nowrap}
+  .ap-compose-a{gap:0 2px}
+  .ap-compose-a a{justify-content:flex-start;padding:9px 4px;font-size:12.5px;gap:5px;min-width:0;white-space:nowrap}
   .ap-compose-a .ap-arr{display:none}
   .ap-compose-a .ap-i{width:18px;height:18px}
   .ap-ptext{-webkit-line-clamp:10}

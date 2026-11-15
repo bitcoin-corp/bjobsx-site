@@ -12,12 +12,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/site.css">
+<link rel="stylesheet" href="/shell.css">
 </head>
 <body>
-<header class="wrap nav">
-  <a class="brand" href="/" aria-label="bJobsX home"><img src="/logo.svg" alt="" width="30" height="30"><span>bJobs<span class="gold">X</span></span></a>
-  <nav class="nav-links" aria-label="Main"><a href="/browse">Browse</a><a href="https://bwalletx.com/jobs">Jobs<span class="hide-s"> · Paid work</span></a></nav>
-</header>
+<!-- shell:strip -->
+<aside class="xs-strip" aria-label="bWalletX"><a href="https://bwalletx.com/"><svg viewBox="23 8 74 100" aria-hidden="true" focusable="false"><defs><linearGradient id="xs-sg" gradientUnits="userSpaceOnUse" x1="0" y1="12" x2="0" y2="105"><stop offset="0" stop-color="#FFE58A"/><stop offset=".55" stop-color="#FFD24D"/><stop offset="1" stop-color="#C98F00"/></linearGradient></defs><path fill="url(#xs-sg)" d="M45 12V72H27V30Z M27 72a33 33 0 1 1 66 0a33 33 0 1 1-66 0Z M45 72a15 15 0 1 0 30 0a15 15 0 1 0-30 0Z"/></svg><span>Part of <b>bWalletX</b></span><span class="xs-go" aria-hidden="true">&rarr;</span></a></aside>
+<!-- /shell:strip -->
+<!-- shell:header -->
+<header class="xs-bar"><div class="xs-wrap xs-nav"><a class="xs-brand" href="/" aria-label="bJobsX home"><svg viewBox="23 8 74 100" aria-hidden="true" focusable="false"><path fill="currentColor" d="M45 12V72H27V30Z M27 72a33 33 0 1 1 66 0a33 33 0 1 1-66 0Z M45 72a15 15 0 1 0 30 0a15 15 0 1 0-30 0Z"/></svg><span><span class="xs-sr">b</span><span class="xs-nm">Jobs</span><i>X</i></span><span class="beta">Beta</span></a><nav class="xs-links" aria-label="Main"><a href="/contracts">Jobs</a><a href="/browse">People</a><a href="/studio">Your profile</a></nav><div class="xs-acts"><a class="xs-post" href="/post">Post a job</a><span data-bwx></span></div></div></header>
+<!-- /shell:header -->
 <main class="wrap legal">
 <p class="kicker">Terms</p>
 <h1>Terms of use</h1>
@@ -53,9 +56,13 @@
 <h2>Law</h2>
 <p>These terms are governed by the law of England and Wales. Questions: ask b in bWalletX.</p>
 </main>
-<footer>
-  bJobsX · THE BITCOIN CORPORATION LTD, company no. 16735102
-  <nav aria-label="Footer"><a href="/">Home</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></nav>
+<!-- shell:footer -->
+<footer class="xs-foot">
+  <nav aria-label="Footer"><a href="/">Home</a><a href="/contracts">Jobs</a><a href="/post">Post a job</a><a href="/browse">People</a><a href="/studio">Your profile</a><a href="/what-you-can-post">What you can post</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="https://www.bchatx.com/s/bjobs">The bJobs Board</a></nav>
+  <p>bJobsX · part of the bWalletX family · THE BITCOIN CORPORATION LTD, company no. 16735102</p>
 </footer>
+<script src="https://unpkg.com/@bwalletx/connect@0.7.0/dist/bwalletx-connect.global.js" integrity="sha384-VkIrDOw3Hmv7qnytbLGT1hNz7DbJ3IJiI91HSOTqjWu146/hl1KINi4v/hPzTfvI" crossorigin="anonymous"></script>
+<script src="/bwx.js"></script>
+<!-- /shell:footer -->
 </body>
 </html>

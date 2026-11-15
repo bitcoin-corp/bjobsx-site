@@ -20,8 +20,6 @@ async function refresh() {
     if (was === list.map(cardSig).join()) continue;
     g.innerHTML = list.map(contractArticle).join('\n');
   }
-  const post = document.querySelector('[data-post-contract]');
-  if (post && j.postUrl) { post.href = j.postUrl; post.hidden = false; }
 }
 
 refresh();

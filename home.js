@@ -195,8 +195,6 @@ async function poll() {
     if (r.ok) j = await r.json();
   } catch { /* offline or the API is down: keep what's on screen */ }
   if (j) {
-    const post = document.querySelector('[data-post-contract]');
-    if (post) { post.hidden = !j.postUrl; if (j.postUrl) post.href = j.postUrl; }
     if (Array.isArray(j.contracts)) {
       const list = homeRows(j.contracts);
       const s = JSON.stringify(list);

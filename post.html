@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Post a job · bJobsX</title>
+<meta name="description" content="Post a small, fixed-price job on bJobsX. Pay in BSV, a token or shares in your company. Every post is checked before it goes live.">
+<link rel="canonical" href="https://bjobsx.com/post">
+<meta property="og:type" content="website"><meta property="og:url" content="https://bjobsx.com/post"><meta property="og:site_name" content="bJobsX">
+<meta property="og:title" content="Post a job · bJobsX"><meta property="og:description" content="Post a small, fixed-price job. Pay in BSV, a token or shares in your company.">
+<meta property="og:image" content="https://bjobsx.com/og-bjobsx-v4.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="bJobsX: small jobs, paid in Bitcoin. A TERRORNODE contract card and a See open jobs button.">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://bjobsx.com/og-bjobsx-v4.png">
+<meta name="theme-color" content="#000000"><link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/site.css">
+<link rel="stylesheet" href="/shell.css">
+<link rel="stylesheet" href="/cards.css">
+<style>
+.ph{padding:30px 0 4px;max-width:760px}
+.ph h1{font-size:clamp(36px,6vw,58px);margin-bottom:12px}
+.ph .lede{color:#d8d3c5;font-size:clamp(16px,2vw,18px);margin:0 0 10px}
+.ph .rl{margin:0;font:600 14px 'Space Grotesk',system-ui,sans-serif}
+.ph .rl a{color:var(--gold);text-underline-offset:3px}
+.pf{display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:"fields" "prev" "send";gap:16px;margin-top:18px}
+@media(min-width:1020px){.pf{grid-template-columns:minmax(0,1fr) minmax(0,400px);grid-template-areas:"fields prev" "send prev";column-gap:28px}.pf-prev-in{position:sticky;top:84px}}
+.pf-fields{grid-area:fields;display:grid;gap:16px;min-width:0}
+.pf-prev{grid-area:prev;min-width:0}
+.pf-send{grid-area:send;min-width:0}
+.pf-sec{background:var(--card);border:1px solid rgba(255,255,255,.09);border-radius:20px;padding:20px;min-width:0;margin:0}
+.pf-sec>h2{font-size:21px;margin:0 0 4px}
+.pf-sec>.hint:first-of-type{margin:0 0 4px}
+.fld{display:grid;gap:6px;margin-top:18px;min-width:0;border:0;padding:0}
+.fld>label:not(.opt),.fld>legend,.lbl{font:600 15px 'Space Grotesk',system-ui,sans-serif;color:var(--ink);padding:0}
+.fld>legend{margin-bottom:6px}
+.fld .hint{margin:0}
+.lblrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.count{font-size:12.5px;color:var(--mute);font-variant-numeric:tabular-nums}
+.pf input[type=text],.pf textarea,.pf select{width:100%;min-height:48px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:#000;color:var(--ink);padding:11px 14px;font:400 16px/1.4 'IBM Plex Sans',system-ui,sans-serif;transition:border-color .12s,box-shadow .12s}
+.pf textarea{min-height:150px;resize:vertical;line-height:1.55}
+.pf textarea.short{min-height:84px}
+.pf select{appearance:none;-webkit-appearance:none;padding-right:42px;background:#000 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23ffd24d' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 16px center}
+.pf input::placeholder,.pf textarea::placeholder{color:#6f6c64}
+.pf input:focus,.pf textarea:focus,.pf select:focus{border-color:var(--gold);outline:none;box-shadow:0 0 0 3px rgba(255,210,77,.18)}
+.pf input:disabled{opacity:.45}
+.pf [aria-invalid=true]{border-color:#ff8a7a!important}
+.err{color:#ff9d8f;font-size:14px;margin:0;display:flex;gap:6px;align-items:flex-start}
+.err::before{content:"!";flex:none;display:grid;place-items:center;width:18px;height:18px;margin-top:2px;border-radius:50%;background:#ff8a7a;color:#000;font:700 12px/1 'Space Grotesk',system-ui,sans-serif}
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid rgba(255,255,255,.12);border-radius:12px;cursor:pointer;background:#000;min-width:0}
+.opt input{width:20px;height:20px;accent-color:#ffd24d;margin:2px 0 0;flex:none}
+.opt b{font:600 15px 'Space Grotesk',system-ui,sans-serif;display:block}
+.opt span{font-size:14px;color:#bdb8ab;display:block}
+.opt:has(input:checked){border-color:rgba(255,210,77,.6);background:#0d0c08}
+.opt:has(input:focus-visible){outline:2px solid var(--gold);outline-offset:2px}
+.opt a{color:var(--gold)}
+.sub{display:grid;gap:6px;margin:10px 0 0 32px}
+@media(max-width:560px){.sub{margin-left:0}}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+@media(max-width:560px){.two{grid-template-columns:1fr}}
+.amt{position:relative}
+.amt input{padding-right:64px!important}
+.amt i{position:absolute;right:14px;top:14px;font:600 14px 'Space Grotesk',system-ui,sans-serif;font-style:normal;color:var(--gold);pointer-events:none}
+.parts{display:grid;gap:12px;margin-top:14px}
+.part{border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px;margin:0;min-width:0;background:#060607}
+.part-h{display:flex;gap:10px;align-items:flex-end}
+.part-h .fld{margin:0;flex:1}
+.part-x{min-height:48px;padding:0 14px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:none;color:#cfcabd;font:600 14px 'Space Grotesk',system-ui,sans-serif;cursor:pointer}
+.part-x:hover{border-color:#ff8a7a;color:#fff}
+.part-x:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.part .fld{margin-top:12px}
+.add{margin-top:12px}
+.notes{display:grid;gap:8px;margin-top:14px}
+.notes:empty{display:none}
+.note{margin:0;border-left:2px solid var(--gold);padding:2px 0 2px 10px;color:#e9e4d6;font-size:14px}
+.tabs{display:flex;gap:6px;margin:2px 0 4px}
+.tabs button{min-height:34px;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:none;color:#cfcabd;font:600 13px 'Space Grotesk',system-ui,sans-serif;cursor:pointer}
+.tabs button[aria-selected=true]{background:rgba(255,210,77,.12);border-color:rgba(255,210,77,.55);color:var(--gold)}
+.tabs button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.md{min-height:150px;border:1px dashed rgba(255,210,77,.3);border-radius:12px;padding:12px 16px;color:#d8d3c5;overflow-wrap:anywhere}
+.md>:first-child{margin-top:0}.md>:last-child{margin-bottom:0}
+.md h4,.md h5,.md h6{font:700 17px 'Space Grotesk',system-ui,sans-serif;color:var(--ink);margin:14px 0 6px}
+.md code{background:#16161a;border-radius:6px;padding:1px 6px;font-size:14px}
+.md pre{background:#0f0f12;border-radius:10px;padding:10px 12px;overflow:auto}
+.md pre code{background:none;padding:0}
+.md blockquote{margin:8px 0;border-left:2px solid var(--gold);padding-left:10px}
+.md a{color:var(--gold)}
+.md .empty{color:var(--mute)}
+.pf-prev-in>h2{font-size:21px;margin:0 0 2px}
+.pf-prev-in>.hint{margin:0 0 12px}
+.pf-prev .contract{border-color:rgba(255,210,77,.4);box-shadow:0 30px 60px -30px rgba(255,210,77,.25)}
+.meta{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 14px;margin:14px 0 0;padding:14px 16px;border:1px solid rgba(255,255,255,.09);border-radius:16px;font-size:14px}
+.meta dt{color:var(--mute)}
+.meta dd{margin:0;color:#e9e4d6;overflow-wrap:anywhere}
+.errsum{border:1px solid #ff8a7a;background:#170b09;border-radius:16px;padding:16px 18px;margin-top:18px}
+.errsum:focus{outline:2px solid #ff8a7a;outline-offset:2px}
+.errsum h2{font-size:19px;margin:0 0 8px;color:#ffb3a8}
+.errsum ul{margin:0;padding-left:20px;display:grid;gap:4px}
+.errsum a{color:#ffd0c8}
+.pf-actions{display:flex;gap:12px 16px;align-items:center;flex-wrap:wrap;margin-top:18px}
+.pf-actions .btn{min-width:220px}
+@media(max-width:560px){.pf-actions .btn{width:100%}}
+.linkish{background:none;border:0;padding:6px 0;color:var(--mute);font:500 14px 'IBM Plex Sans',system-ui,sans-serif;text-decoration:underline;cursor:pointer}
+.linkish:hover{color:var(--ink)}
+.callout{margin:16px 0 0;padding:14px 16px;border-radius:14px;border:1px solid rgba(255,210,77,.45);background:#0d0c08;color:#f4f1e8;font-size:15px}
+.callout.bad{border-color:#ff8a7a;background:#170b09}
+.callout:empty{display:none}
+.callout b{color:var(--gold)}
+.connect{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px;padding:14px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:#060607}
+.connect p{margin:0;flex:1 1 240px;font-size:14.5px;color:#d8d3c5}
+.needs{margin-top:16px;padding:16px;border-radius:16px;border:1px solid rgba(255,210,77,.45);background:#0d0c08}
+.needs h3{font:700 18px 'Space Grotesk',system-ui,sans-serif;margin:0 0 10px}
+.needs ol{margin:0;padding:0;list-style:none;display:grid;gap:10px;counter-reset:n}
+.needs li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;align-items:start;counter-increment:n}
+.needs li::before{content:counter(n);grid-row:span 3;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;border:1px solid var(--gold);color:var(--gold);font:700 13px 'Space Grotesk',system-ui,sans-serif}
+.needs li b{font:600 15px 'Space Grotesk',system-ui,sans-serif}
+.needs li span{font-size:14px;color:#cfcabd}
+.needs li .btn{justify-self:start;min-height:40px;margin-top:4px}
+.needs li input[type=text]{margin-top:4px}
+.needs .opt{margin-top:4px}
+.done{max-width:640px;margin:40px auto 0;text-align:center}
+.done:focus{outline:none}
+.done .tick{width:64px;height:64px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg,#ffe58a,#ffd24d 55%,#e0a800);color:#000}
+.done h2{font-size:clamp(28px,4vw,40px)}
+.done p{color:#d8d3c5}
+.done .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+</style>
+</head>
+<body data-bwx-stay>
+<!-- shell:strip -->
+<aside class="xs-strip" aria-label="bWalletX"><a href="https://bwalletx.com/"><svg viewBox="23 8 74 100" aria-hidden="true" focusable="false"><defs><linearGradient id="xs-sg" gradientUnits="userSpaceOnUse" x1="0" y1="12" x2="0" y2="105"><stop offset="0" stop-color="#FFE58A"/><stop offset=".55" stop-color="#FFD24D"/><stop offset="1" stop-color="#C98F00"/></linearGradient></defs><path fill="url(#xs-sg)" d="M45 12V72H27V30Z M27 72a33 33 0 1 1 66 0a33 33 0 1 1-66 0Z M45 72a15 15 0 1 0 30 0a15 15 0 1 0-30 0Z"/></svg><span>Part of <b>bWalletX</b></span><span class="xs-go" aria-hidden="true">&rarr;</span></a></aside>
+<!-- /shell:strip -->
+<!-- shell:header -->
+<header class="xs-bar"><div class="xs-wrap xs-nav"><a class="xs-brand" href="/" aria-label="bJobsX home"><svg viewBox="23 8 74 100" aria-hidden="true" focusable="false"><path fill="currentColor" d="M45 12V72H27V30Z M27 72a33 33 0 1 1 66 0a33 33 0 1 1-66 0Z M45 72a15 15 0 1 0 30 0a15 15 0 1 0-30 0Z"/></svg><span><span class="xs-sr">b</span><span class="xs-nm">Jobs</span><i>X</i></span><span class="beta">Beta</span></a><nav class="xs-links" aria-label="Main"><a href="/contracts">Jobs</a><a href="/browse">People</a><a href="/studio">Your profile</a></nav><div class="xs-acts"><a class="xs-post" href="/post" aria-current="page">Post a job</a><span data-bwx></span></div></div></header>
+<!-- /shell:header -->
+<main class="wrap" id="main">
+  <section class="ph" id="ph">
+    <p class="kicker">Post a job</p>
+    <h1>Post a job<span class="gold">.</span></h1>
+    <p class="lede">Describe the work, set the pay and send it for review. Nobody else sees it until a moderator approves it. Posting is free for now.</p>
+    <p class="rl"><a href="/what-you-can-post">What you can post</a></p>
+  </section>
+
+  <div class="errsum" id="errsum" tabindex="-1" role="alert" aria-labelledby="errsumH" hidden></div>
+
+  <form class="pf" id="pf" novalidate aria-label="Post a job">
+    <div class="pf-fields">
+      <section class="pf-sec" aria-labelledby="s-job">
+        <h2 id="s-job">The job</h2>
+        <div class="fld">
+          <div class="lblrow"><label for="f-title">Title</label><span class="count" data-count="title" aria-hidden="true"></span></div>
+          <input type="text" id="f-title" name="title" maxlength="140" autocomplete="off" placeholder="For example: Gamepad support" aria-describedby="err-title">
+          <p class="err" id="err-title" hidden></p>
+        </div>
+        <div class="fld">
+          <div class="lblrow"><label for="f-summary">One-line summary</label><span class="count" data-count="summary" aria-hidden="true"></span></div>
+          <input type="text" id="f-summary" name="summary" maxlength="300" autocomplete="off" placeholder="What the contractor builds, in one line" aria-describedby="hint-summary err-summary">
+          <p class="hint" id="hint-summary">Shown on the card under the title.</p>
+          <p class="err" id="err-summary" hidden></p>
+        </div>
+        <div class="fld">
+          <label for="f-description">Description</label>
+          <div class="tabs" role="tablist" aria-label="Description">
+            <button type="button" role="tab" id="tab-write" aria-selected="true" aria-controls="panel-write">Write</button>
+            <button type="button" role="tab" id="tab-preview" aria-selected="false" aria-controls="panel-preview" tabindex="-1">Preview</button>
+          </div>
+          <div role="tabpanel" id="panel-write" aria-labelledby="tab-write">
+            <textarea id="f-description" name="description" maxlength="3000" rows="7" placeholder="What to build, where it lives, and anything the contractor needs to know." aria-describedby="hint-description err-description"></textarea>
+          </div>
+          <div role="tabpanel" id="panel-preview" class="md" aria-labelledby="tab-preview" tabindex="0" hidden></div>
+          <p class="hint" id="hint-description">Markdown works: **bold**, *italic*, lists, `code` and links.</p>
+          <p class="err" id="err-description" hidden></p>
+        </div>
+        <div class="fld">
+          <label for="f-category">Category</label>
+          <select id="f-category" name="category" aria-describedby="err-category">
+            <option value="">Choose a category</option>
+            <option>Software</option><option>Design</option><option>Content</option><option>Research</option><option>Testing your own systems</option><option>Token work</option>
+          </select>
+          <p class="err" id="err-category" hidden></p>
+        </div>
+        <div class="fld">
+          <label for="f-doneWhen">Done when</label>
+          <input type="text" id="f-doneWhen" name="doneWhen" maxlength="600" autocomplete="off" placeholder="For example: a gamepad plays a full run, and the tests pass" aria-describedby="hint-doneWhen err-doneWhen">
+          <p class="hint" id="hint-doneWhen">The test for finished work. Pay is due when it's met.</p>
+          <p class="err" id="err-doneWhen" hidden></p>
+        </div>
+        <div class="fld">
+          <label for="f-time">Time estimate</label>
+          <input type="text" id="f-time" name="time" maxlength="60" autocomplete="off" placeholder="For example: About 2 hours" aria-describedby="err-time">
+          <p class="err" id="err-time" hidden></p>
+        </div>
+      </section>
+
+      <section class="pf-sec" aria-labelledby="s-pay">
+        <h2 id="s-pay">Pay</h2>
+        <p class="hint">One part or more: BSV, a token or shares in your company. The card shows them exactly as you enter them. bJobsX never values them.</p>
+        <div class="parts" id="f-pay" tabindex="-1" aria-describedby="err-pay"></div>
+        <p class="err" id="err-pay" hidden></p>
+        <button type="button" class="btn btn-ghost add" id="addPart">Add a part</button>
+        <div class="notes" id="payNotes" aria-live="polite"></div>
+      </section>
+
+      <section class="pf-sec" aria-labelledby="s-who">
+        <h2 id="s-who">Who can take it</h2>
+        <fieldset class="fld">
+          <legend class="xs-sr">Who can take it</legend>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="takers" value="open" id="f-takers" checked><span><b>Open to all</b><span>The first person to take it gets it.</span></span></label>
+            <label class="opt"><input type="radio" name="takers" value="approve"><span><b>I approve takers</b><span>People ask to take it, and you choose one.</span></span></label>
+          </div>
+        </fieldset>
+        <div class="fld">
+          <label class="opt"><input type="checkbox" name="adult" id="f-adult"><span><b>18+ adult work</b><span>18+ posts are hidden until age checks exist</span></span></label>
+        </div>
+      </section>
+
+      <section class="pf-sec" aria-labelledby="s-terms">
+        <h2 id="s-terms">Terms</h2>
+        <fieldset class="fld">
+          <legend>Who owns the work</legend>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="ip" value="assign" id="f-ip" checked><span><b>Assigned to me on payment</b><span>Copyright passes to you when you pay.</span></span></label>
+            <label class="opt"><input type="radio" name="ip" value="licence"><span><b>A licence</b><span>The contractor keeps copyright and gives you a licence.</span></span></label>
+          </div>
+          <div class="sub" id="licenceBox" hidden>
+            <label class="lbl" for="f-licence">The licence</label>
+            <textarea class="short" id="f-licence" name="licence" maxlength="600" placeholder="For example: MIT, or a perpetual, worldwide licence to use and change it" aria-describedby="err-licence"></textarea>
+            <p class="err" id="err-licence" hidden></p>
+          </div>
+        </fieldset>
+        <div class="fld">
+          <label for="f-law">Governing law</label>
+          <input type="text" id="f-law" name="law" maxlength="80" autocomplete="off" aria-describedby="err-law">
+          <p class="err" id="err-law" hidden></p>
+        </div>
+      </section>
+
+      <section class="pf-sec" aria-labelledby="s-promo">
+        <h2 id="s-promo">Promotion</h2>
+        <div class="fld">
+          <label class="opt"><input type="checkbox" name="promotes" id="f-promotes" aria-controls="promoBox"><span><b>This work promotes a token or investment</b><span>Promoting an investment to the UK public needs an FCA-authorised firm's approval or an exemption.</span></span></label>
+        </div>
+        <div class="sub" id="promoBox" hidden>
+          <fieldset class="fld" style="margin-top:6px">
+            <legend>The promotion is</legend>
+            <div class="opts">
+              <label class="opt"><input type="radio" name="promoBasis" value="approved" id="f-promoBasis" aria-describedby="err-promoBasis"><span><b>Approved by an FCA-authorised firm</b></span></label>
+              <label class="opt"><input type="radio" name="promoBasis" value="exempt"><span><b>Exempt</b></span></label>
+            </div>
+            <p class="err" id="err-promoBasis" hidden></p>
+          </fieldset>
+          <div class="fld" style="margin-top:12px">
+            <label for="f-promoText">Details</label>
+            <textarea class="short" id="f-promoText" name="promoText" maxlength="600" placeholder="The firm and its FCA number, or the exemption that applies" aria-describedby="err-promoText"></textarea>
+            <p class="err" id="err-promoText" hidden></p>
+          </div>
+          <div class="fld" style="margin-top:12px">
+            <label class="opt"><input type="checkbox" name="promoLawful" id="f-promoLawful" aria-describedby="err-promoLawful"><span><b>I promise this promotion is lawful</b></span></label>
+            <p class="err" id="err-promoLawful" hidden></p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="pf-prev" aria-labelledby="pvH">
+      <div class="pf-prev-in">
+        <h2 id="pvH">Preview</h2>
+        <p class="hint">Your card on Jobs, once a moderator approves it.</p>
+        <div id="card"></div>
+        <dl class="meta" id="meta"></dl>
+      </div>
+    </aside>
+
+    <div class="pf-send">
+      <section class="pf-sec" aria-labelledby="s-send">
+        <h2 id="s-send">Check and send</h2>
+        <div class="fld">
+          <label class="opt"><input type="checkbox" name="readRules" id="f-readRules" aria-describedby="err-readRules"><span><b>I've read <a href="/what-you-can-post" target="_blank" rel="noopener">What you can post</a></b><span>The post follows those rules and the law.</span></span></label>
+          <p class="err" id="err-readRules" hidden></p>
+        </div>
+        <div class="connect" id="connectBox" hidden><p>Connect bWalletX before you send. You post as yourself, and you pay the contractor from it.</p><span data-bwx></span></div>
+        <div id="needs"></div>
+        <div class="pf-actions">
+          <button class="btn btn-gold" type="submit" id="send">Send for review</button>
+          <button class="linkish" type="button" id="clear">Clear the form</button>
+        </div>
+        <p class="hint">Your draft is saved on this device as you type.</p>
+        <p class="callout" id="status" role="status" aria-live="polite"></p>
+      </section>
+    </div>
+  </form>
+
+  <section class="done" id="done" tabindex="-1" aria-labelledby="doneH" hidden>
+    <div class="tick" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></div>
+    <p class="kicker">Post a job</p>
+    <h2 id="doneH">Sent for review</h2>
+    <p>A moderator checks every new post before anyone else sees it. If it can't go live as written, we'll tell you.</p>
+    <p class="hint">Reference: <code id="doneId"></code></p>
+    <div class="row"><a class="btn btn-gold" href="/contracts">See open jobs</a><button class="btn btn-ghost" type="button" id="again">Post another job</button></div>
+  </section>
+</main>
+<!-- shell:footer -->
+<footer class="xs-foot">
+  <nav aria-label="Footer"><a href="/">Home</a><a href="/contracts">Jobs</a><a href="/post">Post a job</a><a href="/browse">People</a><a href="/studio">Your profile</a><a href="/what-you-can-post">What you can post</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="https://www.bchatx.com/s/bjobs">The bJobs Board</a></nav>
+  <p>bJobsX · part of the bWalletX family · THE BITCOIN CORPORATION LTD, company no. 16735102</p>
+</footer>
+<script src="https://unpkg.com/@bwalletx/connect@0.7.0/dist/bwalletx-connect.global.js" integrity="sha384-VkIrDOw3Hmv7qnytbLGT1hNz7DbJ3IJiI91HSOTqjWu146/hl1KINi4v/hPzTfvI" crossorigin="anonymous"></script>
+<script src="/bwx.js"></script>
+<!-- /shell:footer -->
+<script type="module" src="/post.js"></script>
+</body>
+</html>
