@@ -132,6 +132,13 @@ function head() {
   // Full paymail is the primary identity label (never the key alone or the bare $handle).
   const sk = pg.identityKey ? pg.identityKey.slice(0, 6) + '\u2026' + pg.identityKey.slice(-4) : '';
   $('handle').textContent = pg.paymail || (mode === 'guest' ? 'Connect bWalletX to get your link' : sk);
+  // Accounts linked in the wallet: public, signed badges (api/_social.js).
+  const WL = { linkedin: 'LinkedIn', github: 'GitHub', x: 'X', google: 'Google' };
+  const wl = (pg.walletLinks || []).filter((l) => WL[l.provider]);
+  let wlEl = $('wlinks');
+  if (!wlEl) { wlEl = document.createElement('p'); wlEl.id = 'wlinks'; wlEl.className = 'mute'; wlEl.style.margin = '4px 0 0'; $('handle').after(wlEl); }
+  wlEl.textContent = wl.map((l) => `${WL[l.provider]} \u2713`).join(' \u00b7 ');
+  wlEl.hidden = !wl.length;
   $('mail').textContent = (own ? p?.headline : pub?.headline) || '';
   if (!pg.paymail && mode === 'owner') $('mail').insertAdjacentHTML('beforeend', ' <a href="https://bwalletx.com/get" target="_blank" rel="noopener">Get your name</a>');
   setAvatar(li?.picture || pg.avatar, name);
