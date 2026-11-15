@@ -21,7 +21,7 @@
 <main class="wrap legal">
 <p class="kicker">Privacy</p>
 <h1>Your data stays yours.</h1>
-<p class="mute">Last updated 24 October 2026.</p>
+<p class="mute">Last updated 15 November 2026.</p>
 <p>bJobsX (bjobsx.com) is run by THE BITCOIN CORPORATION LTD, a company registered in England and Wales, company no. 16735102 ("we"). This page says what we do with your data. We keep it short because we hold very little.</p>
 
 <h2>Your LinkedIn export</h2>
@@ -34,8 +34,9 @@
 <h2>What is public</h2>
 <ul>
   <li>Everything is private by default.</li>
-  <li>When you tick a section and press Publish, your wallet signs it, and only those sections are sent to our server and shown on your page at bjobsx.com/u/your-name and in Browse. Untick and publish again to take them down.</li>
-  <li>We store your chosen username, your wallet's public identity key, the sections you published, and your wallet's signature.</li>
+  <li>When you tick sections and press Publish, your wallet signs exactly those sections and writes them to the Bitcoin SV blockchain, in clear, in one transaction you pay for (the network fee only). Your public profile is on chain, signed by you. bJobsX stores only a pointer: your username. Your page at bjobsx.com/u/your-name and Browse read it back from the chain each time.</li>
+  <li>A blockchain record can't be deleted. Untick and publish again (or "Make all private") and bJobsX stops showing the old sections, but earlier versions stay on chain, where anyone can still read them. Only publish what you are happy to keep public.</li>
+  <li>Your public profile carries your wallet's public identity key, so anyone can check it was you who signed it.</li>
 </ul>
 
 <h2>Your connections</h2>
@@ -51,13 +52,13 @@
 <p>Once your wallet is connected you can link LinkedIn ("Sign in with LinkedIn"). LinkedIn tells us your name, photo, email address and whether that email is verified. It doesn't share your job history. We keep your name, your photo's link, whether your email is verified, when you linked, and a one-way hash of LinkedIn's ID for you. We don't keep your email address or any LinkedIn password or token. This is kept in a second cookie on bjobsx.com, sealed so only our server can read it and tied to your wallet. It lasts 180 days, or until you press Unlink. While you link, a third cookie lasting 10 minutes checks that the reply from LinkedIn is for you.</p>
 
 <h2>Payments</h2>
-<p>Minting costs 1p per record plus a small network fee. It is paid from your wallet, which shows the amount before you approve. We don't hold your money.</p>
+<p>Minting costs 1p per record plus a small network fee. Publishing your public profile costs only the network fee (and two 1-satoshi markers that let it be found). Both are paid from your wallet, which shows the amount before you approve. We don't hold your money.</p>
 
 <h2>Others we use</h2>
-<p>Vercel hosts the site. Our server (push.bwalletx.com) stores published profiles and usernames. WhatsOnChain and GorillaPool are asked whether a transaction is on the network. WhatsOnChain and frankfurter.app give us exchange rates. Fonts load from Google Fonts and scripts from unpkg and cdnjs.</p>
+<p>Vercel hosts the site. Our server (push.bwalletx.com) stores usernames, never profile content. WhatsOnChain and GorillaPool are asked whether a transaction is on the network, and WhatsOnChain is where we read public profiles from the chain. WhatsOnChain and frankfurter.app give us exchange rates. Fonts load from Google Fonts and scripts from unpkg and cdnjs.</p>
 
 <h2>Your rights</h2>
-<p>You can see, change or take down your public profile at any time from your profile page. To ask about your data, or to have your username and published profile deleted from our server, ask b in bWalletX. If you are in the UK you can also complain to the Information Commissioner's Office (ico.org.uk).</p>
+<p>You can see or change your public profile at any time from your profile page, and stop bJobsX showing it; we can't delete what is on chain. To ask about your data, or to have your username deleted from our server, ask b in bWalletX. If you are in the UK you can also complain to the Information Commissioner's Office (ico.org.uk).</p>
 </main>
 <footer>
   bJobsX · THE BITCOIN CORPORATION LTD, company no. 16735102

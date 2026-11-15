@@ -4,8 +4,10 @@
 // Privacy model:
 // - The LinkedIn export is parsed here, in the browser (lib/linkedin.js). The import is kept in this browser's
 //   localStorage only. It is never sent to our server.
-// - Every section is private by default. Only the sections the owner ticks AND publishes (wallet-signed) are sent to
-//   the server, and only those are shown at /u/<name> and in Browse.
+// - Every section is private by default. Publish puts ONLY the ticked sections on chain, in one transaction from the
+//   owner's wallet, signed by their identity key (mint/records.js profileOutputs). bJobsX stores no copy: /u/<name>
+//   and Browse read it back from chain and check the signature (api/_chain.js). The server keeps only the username.
+//   "Make all private" publishes an empty profile; earlier versions stay on chain, and the page says so.
 // - Connections (other people's data) are shown only to the owner, never published, and only minted (privately) when
 //   the owner ticks "Include my connections".
 // - Everything from the files or the server is escaped before it is put in the page.
@@ -26,7 +28,8 @@ const say = (el, text, kind = '') => { el.textContent = text || ''; el.className
 const badge = (el, live, text) => { el.className = 'badge ' + (live ? 'live' : 'coming'); el.textContent = text || (live ? 'Live' : 'Coming'); };
 const safeUrl = (u) => (typeof u === 'string' && /^https:\/\/[^\s"'()<>\\]+$/i.test(u) ? u : null);
 const enc = new TextEncoder();
-const sha256hex = async (t) => Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', enc.encode(t))), (b) => b.toString(16).padStart(2, '0')).join('');
+const WOC_TX = (txid) => `https://whatsonchain.com/tx/${encodeURIComponent(txid)}`;
+const LAST_PUB = 'bjx-pub-last'; // { identityKey, txid, at }: what this browser last published (the index can lag)
 
 let P = null, pg = null, mode = null; // mode: 'owner' | 'public' | 'guest'
 let data = null, sections = new Set(), cfg = null, busy = false, site = null;
@@ -60,7 +63,9 @@ const liResult = (() => {
 
 // ── load ──────────────────────────────────────────────────────────────────────
 async function load() {
-  const p = await fetch(uname ? '/api/profile?name=' + encodeURIComponent(uname) : '/api/profile?me=1', { cache: 'no-store' })
+  const last = ls.get(LAST_PUB);
+  const hint = !uname && last && /^[0-9a-f]{64}$/.test(String(last.txid)) ? '&txid=' + last.txid : '';
+  const p = await fetch(uname ? '/api/profile?name=' + encodeURIComponent(uname) : '/api/profile?me=1' + hint, { cache: 'no-store' })
     .then(async (r) => ({ ok: r.ok, status: r.status, j: await r.json().catch(() => ({})) })).catch(() => ({ ok: false, status: 0, j: {} }));
   $('loading').hidden = true;
   site = await siteState();
@@ -188,21 +193,30 @@ function paint() {
     if (data) paintMint();
   } else {
     const pr = pg.profile;
-    $('profile').innerHTML = pr ? sectionsHtml(pr, () => true) : '<section class="panel"><p class="mute" style="margin:0">Nothing on this profile is public yet.</p></section>';
+    $('profile').innerHTML = pr ? sectionsHtml(pr, () => true) : `<section class="panel"><p class="mute" style="margin:0">${pg.chainOk === false ? 'We couldn’t read this profile from the chain just now. Try again in a minute.' : 'Nothing on this profile is public yet.'}</p></section>`;
+    if (pr && pg.profileTxid) $('profile').insertAdjacentHTML('beforeend', `<p class="hint">On chain, signed by its owner${pg.updatedAt ? ' · ' + esc(dateText(pg.updatedAt)) : ''} · <a class="gold" href="${esc(WOC_TX(pg.profileTxid))}" target="_blank" rel="noopener">See the transaction</a></p>`);
     if (P.signedIn === false) $('profile').insertAdjacentHTML('beforeend', '<p class="hint">Is this yours? Connect bWalletX at the top to manage it.</p>');
   }
 }
+
+const wantSections = () => L.PUBLIC_SECTIONS.filter((s) => sections.has(s));
+/** Exactly what Publish would put on chain (null = nothing public). */
+const wantProfile = () => L.cleanPublic(L.publicProfile(data, wantSections()));
 
 function paintPubbar() {
   const bar = $('pubbar');
   bar.hidden = !data;
   if (!data) return;
-  const want = L.PUBLIC_SECTIONS.filter((s) => sections.has(s));
+  const want = wantSections();
   const live = publishedSections();
-  const changed = want.join() !== live.join() || (pg.profile && JSON.stringify(L.publicProfile(data, want)) !== JSON.stringify(pg.profile));
+  const changed = JSON.stringify(wantProfile()) !== JSON.stringify(pg.profile || null);
   const names = (l) => (l.length ? l.map((s) => SECTION_NAMES[s]).join(', ') : 'nothing');
   $('pubQ').textContent = mode === 'guest' ? `Public when you publish: ${names(want)}. Connect bWalletX to publish.`
-    : `Public now: ${names(live)}.${changed ? ` After publishing: ${names(want)}.` : ''}`;
+    : pg.chainOk === false ? `We couldn’t read your profile from the chain just now. After publishing: ${names(want)}.`
+    : `Public on chain now: ${names(live)}.${changed ? ` After publishing: ${names(want)}.` : ''}`;
+  const tx = $('pubTx');
+  tx.hidden = !(mode === 'owner' && pg.profileTxid);
+  if (!tx.hidden) { tx.href = WOC_TX(pg.profileTxid); tx.textContent = pg.profile ? 'See it on chain' : 'See the latest on chain'; }
   $('pubSave').textContent = want.length ? 'Publish' : live.length ? 'Make all private' : 'Publish';
   $('pubSave').disabled = busy || mode === 'guest' || !changed;
 }
@@ -226,37 +240,59 @@ $('profile').addEventListener('change', (e) => {
   paintPubbar();
 });
 
-// ── publish (wallet-signed) ──────────────────────────────────────────────────
-/** Sign and save {username, profile}. The server checks the signature against the signed-in identity. */
-async function saveSigned(username, profile) {
+// ── publish (on chain, signed by your wallet) ────────────────────────────────
+/** Sign and save the username (push server). Profile content never goes there: it is on chain. */
+async function saveName(username) {
   const w = await window.bjxWallet();
   const timestamp = Date.now();
-  const hash = profile ? await sha256hex(JSON.stringify(profile)) : '-';
-  const msg = `bjobsx profile ${key()} ${username} ${hash} ${timestamp}`;
+  const msg = `bjobsx profile ${key()} ${username} - ${timestamp}`;
   const { signature } = await w.createSignature({ protocolID: [2, 'bjobsx profile'], keyID: 'settings', counterparty: 'anyone', data: Array.from(enc.encode(msg)) });
-  const r = await fetch('/api/profile/save', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ username, profile, timestamp, signature }) });
+  const r = await fetch('/api/profile/save', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ username, timestamp, signature }) });
   const j = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(j.error || 'That wasn’t saved.');
   return j;
 }
 const walletWords = (e) => /denied|declin|reject|cancel/i.test(String(e?.message)) ? 'Your wallet said no, so nothing changed.'
-  : e?.code === 'NOT_FOUND' ? 'Your wallet isn’t connected in this browser. Press Connect bWalletX at the top, then try again.' : (e?.message || 'That didn’t work. Try again.');
+  : e?.code === 'NOT_FOUND' ? 'Your wallet isn’t connected in this browser. Press Connect bWalletX at the top, then try again.'
+  : e?.code === 'NOT_ON_CHAIN' ? `Your wallet answered, but the network doesn’t show it yet (${String(e.txid).slice(0, 10)}…). Your bWalletX keeps trying to send it. Check back in a few minutes before you publish again.`
+  : (e?.message || 'That didn’t work. Try again.');
 
 $('pubSave').onclick = async () => {
   if (busy || mode !== 'owner') return;
-  const want = L.PUBLIC_SECTIONS.filter((s) => sections.has(s));
-  const profile = L.publicProfile(data, want);
-  if (profile && enc.encode(JSON.stringify(profile)).length > 64 * 1024) return say($('pubMsg'), 'That is too much to publish at once. Make fewer sections public, or shorten long descriptions.', 'bad');
-  if (!pg.settingsLive) return say($('pubMsg'), 'Publishing opens shortly. Your choices are saved on this device until then.');
-  const username = pg.username && USERNAME_RE.test(pg.username) ? pg.username : null;
-  if (!username) { openModal('account'); return say($('uMsg'), 'Pick a username first. Your $name has a character a link can’t use.', 'bad'); }
-  busy = true; paintPubbar(); $('pubSave').classList.add('busy'); say($('pubMsg'), 'Check your wallet: it signs what goes public.');
+  const want = wantSections(), profile = wantProfile();
+  const json = R.profileContent(profile);
+  if (json.length > R.PROFILE_MAX_BYTES) return say($('pubMsg'), 'That is too much to publish at once. Make fewer sections public, or shorten long descriptions.', 'bad');
+  const msg = $('pubMsg');
+  busy = true; paintPubbar(); $('pubSave').classList.add('busy'); say(msg, 'Working out the network fee…');
   try {
-    const j = await saveSigned(username, profile);
-    pg.profile = j.profile ?? profile; pg.username = j.username || username; pg.usernameSaved = true;
-    say($('pubMsg'), profile ? `Published ✓ Your page shows: ${want.map((s) => SECTION_NAMES[s]).join(', ')}.` : 'Done ✓ Nothing on your page is public now.', 'ok');
+    const w = await window.bjxWallet();
+    const walletKey = (await w.getPublicKey({ identityKey: true })).publicKey;
+    if (walletKey !== key()) throw new Error('The wallet in this browser is a different identity from the one signed in. Reconnect bWalletX.');
+    cfg = cfg || await loadCfg();
+    const cost = R.profileCost(json.length, cfg?.satPerKb || 100);
+    const dollars = usd(cost.totalSats, cfg);
+    const price = satsText(cost.totalSats) + (dollars ? ` (${dollars})` : '');
+    say(msg, '');
+    const ok = profile
+      ? await ask('Publish on chain?', `${want.map((s) => SECTION_NAMES[s]).join(', ')} go on the Bitcoin SV blockchain in clear, signed by your wallet. Anyone can read them, and it’s permanent: publishing again changes what bJobsX shows, but earlier versions stay on chain. Network fee about ${price}, paid from your wallet. No bJobsX charge.`, 'Publish')
+      : await ask('Make everything private?', `This publishes an empty profile, so bJobsX shows nothing. Earlier versions stay on chain, where anyone can still read them. Network fee about ${price}, paid from your wallet.`, 'Make private');
+    if (!ok) throw Object.assign(new Error(''), { quiet: true });
+    say(msg, 'Check your wallet: it signs your profile, then sends it.');
+    const { outputs } = await R.profileOutputs(w, json);
+    const t = await w.createAction({
+      description: profile ? 'bJobsX: publish your public profile' : 'bJobsX: make your profile private',
+      outputs, labels: [R.PROFILE_LABEL], options: { randomizeOutputs: false, acceptDelayedBroadcast: false },
+    });
+    if (!t?.txid) throw new Error('The wallet returned no transaction.');
+    say(msg, 'Approved. Checking the network has it…');
+    if (!(await R.confirmOnChain(t.txid, { pending: t.pending === true }))) throw R.notOnChain(t.txid);
+    const at = R.readProfileJson(json).at;
+    ls.set(LAST_PUB, { identityKey: key(), txid: t.txid, at });
+    Object.assign(pg, { profile, updatedAt: at, profileTxid: t.txid, chainOk: true });
+    say(msg, profile ? `Published on chain ✓ Your page shows: ${want.map((s) => SECTION_NAMES[s]).join(', ')}.${pg.username ? '' : ' Pick a username so people can find it.'}`
+      : 'Done ✓ Nothing on your page is public now. Earlier versions stay on chain.', 'ok');
     head();
-  } catch (e) { say($('pubMsg'), walletWords(e), 'bad'); }
+  } catch (e) { say(msg, e?.quiet ? '' : walletWords(e), e?.quiet ? '' : 'bad'); }
   busy = false; $('pubSave').classList.remove('busy'); paintPubbar();
 };
 
@@ -273,7 +309,7 @@ function account() {
     if (pg.usernameSaved && username === pg.username) return say(out, 'Nothing to change: that’s already saved.');
     btn.disabled = true; btn.classList.add('busy'); btn.textContent = 'Check your wallet…'; say(out, '');
     try {
-      const j = await saveSigned(username, pg.profile || null);
+      const j = await saveName(username);
       pg.username = j.username || username; pg.usernameSaved = true;
       say(out, 'Saved ✓ Your profile is at bjobsx.com/u/' + pg.username, 'ok'); head();
       if (uname) history.replaceState(null, '', '/u/' + encodeURIComponent(pg.username));
