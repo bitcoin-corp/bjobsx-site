@@ -1,12 +1,12 @@
 // GET /api/feed -> { posts: [...], live, source } — public posts from bChatX's open feed, for the signed-in home.
 // A read-through proxy: bJobsX stores nothing. Rows are cleaned by lib/feed-view.js (only safe fields survive; posts the
 // source marks nsfw, blurred or sensitive are dropped). Cached 60 s at the CDN.
-// If bChatX is slow (3 s), down or answers nonsense, this answers 200 with an empty list, never an error page.
+// If bChatX is slow (6 s; its cold start is about 4 s), down or answers nonsense, this answers 200 with an empty list, never an error page.
 // Public and signed-out: no wallet, no cookies.
 import { get } from './_lib.js';
 import { cleanFeed, FEED_SOURCE } from '../lib/feed-view.js';
 
-export const FEED_MS = 3000;
+export const FEED_MS = 6000;
 
 export default async function handler(req, res) {
   if (req.method && req.method !== 'GET' && req.method !== 'HEAD') {

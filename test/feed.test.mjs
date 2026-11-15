@@ -1,6 +1,6 @@
 import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
-import handler from '../api/feed.js';
+import handler, { FEED_MS } from '../api/feed.js';
 import { cleanFeed, flagged, postHTML, linkify, profileHref, FEED_SOURCE, BCHATX } from '../lib/feed-view.js';
 import { isTokenPay, tokenPayNote, TOKEN_PAY_NOTE, normalise, contractArticle, homeRows, hasShares, paysBsv, payNotes, sharesNote } from '../lib/contracts-view.js';
 
@@ -76,7 +76,7 @@ test('slow, down or nonsense source: 200 with an empty list, never an error', as
   globalThis.fetch = (u, opts) => new Promise((_, no) => opts.signal.addEventListener('abort', () => no(opts.signal.reason)));
   const t = Date.now();
   let r = await call();
-  assert.ok(Date.now() - t < 5000, 'gives up at the timeout');
+  assert.ok(Date.now() - t < FEED_MS + 1500, 'gives up at the timeout');
   assert.equal(r.code, 200);
   assert.deepEqual(r.body.posts, []);
   assert.equal(r.body.live, false);
