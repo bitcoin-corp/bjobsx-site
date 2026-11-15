@@ -112,27 +112,24 @@ function shell() {
     </section>
     <section class="ap-card ap-box ap-work" aria-labelledby="ap-work-h">
       <h2 id="ap-work-h">Your work</h2>
-      <dl class="ap-stats">
-        <div><dt>Contracts in progress</dt><dd title="Tracked here once contract rooms open">&mdash;</dd></div>
-        <div><dt>Contracts done</dt><dd title="Tracked here once contract rooms open">&mdash;</dd></div>
-        <div><dt>Records minted <small>(this device)</small></dt><dd data-minted>0</dd></div>
+      <dl class="ap-stats ap-stats-c">
+        <div><dt>In progress</dt><dd title="Tracked here once contract rooms open">&mdash;</dd></div>
+        <div><dt>Done</dt><dd title="Tracked here once contract rooms open">&mdash;</dd></div>
+        <div><dt>Minted</dt><dd data-minted title="Records minted on this device">0</dd></div>
         <div data-imp-row hidden><dt>LinkedIn history <small>(this device)</small></dt><dd data-imp></dd></div>
       </dl>
-      <p class="ap-note">Claims are by email for now. Your contracts show here once contract rooms open.</p>
       <a class="ap-more" href="/contracts">Open contracts <b data-open-n></b></a>
     </section>
-    <section class="ap-card ap-box ap-dev" aria-labelledby="ap-dev-h">
-      <h2 id="ap-dev-h">${ico('git')} Developer?</h2>
-      <a class="ap-act" href="${L.git}" target="_blank" rel="noopener"><b>Link your GitHub with bGitX${ARR}</b><span>A room for each repo, and pull requests you approve.</span></a>
-      <a class="ap-act" href="${L.token}" target="_blank" rel="noopener"><b>Tokenise your repo${ARR}</b><span>Your repo's token opens its room to the people who hold it.</span></a>
-    </section>
     <section class="ap-card ap-box ap-org" id="ap-org" tabindex="-1" aria-labelledby="ap-org-h">
-      <h2 id="ap-org-h">${ico('org')} Your organisation</h2>
-      <p class="ap-note">It's yours: offer shares for work, issue your token and agree terms with your own investors, all in bChatX.</p>
-      <a class="ap-act ap-act-1" href="${L.org}" target="_blank" rel="noopener"><b>Offer equity for work${ARR}</b><span>Post a contract that pays in shares of your company.</span></a>
-      <a class="ap-act" href="${L.org}" target="_blank" rel="noopener"><b>Start an organisation${ARR}</b><span>A bChatX room for your partners, with founding terms.</span></a>
-      <a class="ap-act" href="${L.token}" target="_blank" rel="noopener"><b>Issue a token${ARR}</b><span>Your token, gating your organisation's room.</span></a>
-      <a class="ap-act" href="${L.org}" target="_blank" rel="noopener"><b>Raise in a private deal room${ARR}</b><span>Your deal room in bChatX, where you agree terms with your own investors.</span></a>
+      <h2 id="ap-org-h">${ico('org')} Build</h2>
+      <nav class="ap-links" aria-label="Build in bChatX and bGitX">
+        <a class="ap-lk ap-lk-1" href="${L.org}" target="_blank" rel="noopener">Offer equity for work${ARR}</a>
+        <a class="ap-lk" href="${L.org}" target="_blank" rel="noopener">Start an organisation${ARR}</a>
+        <a class="ap-lk" href="${L.token}" target="_blank" rel="noopener">Issue a token${ARR}</a>
+        <a class="ap-lk" href="${L.org}" target="_blank" rel="noopener">Raise in a private deal room${ARR}</a>
+        <a class="ap-lk" href="${L.git}" target="_blank" rel="noopener">${ico('git')} Link your GitHub (bGitX)${ARR}</a>
+        <a class="ap-lk" href="${L.token}" target="_blank" rel="noopener">Tokenise your repo${ARR}</a>
+      </nav>
     </section>
   </aside>
 
