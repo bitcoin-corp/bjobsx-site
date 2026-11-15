@@ -4,6 +4,8 @@
 :root{--ap-bg:#000;--ap-top:#0a0a0b;--ap-card:#0d0d0e;--ap-card2:#121214;--ap-line:rgba(255,255,255,.085);--ap-gl:rgba(255,210,77,.2);--ap-ink:#f4f1e8;--ap-soft:#cfcabd;--ap-mute:#8f8b81;--ap-gold:#ffd24d;--ap-gold2:#F5B800;--ap-hf:'Space Grotesk',system-ui,-apple-system,sans-serif;--ap-bf:'IBM Plex Sans',system-ui,-apple-system,sans-serif}
 html.bjx-app,html.bjx-app body{background:var(--ap-bg);color-scheme:dark}
 #app{font:400 14px/1.45 var(--ap-bf);color:var(--ap-ink);min-height:100vh}
+/* Other pages wear only the bar (topbar.js mount): no box of its own, so the bar sticks to the page. */
+#app.ap-chrome{display:contents}
 #app *{box-sizing:border-box}
 #app a{color:inherit;text-decoration:none}
 #app :focus-visible{outline:2px solid var(--ap-gold);outline-offset:2px;border-radius:6px}

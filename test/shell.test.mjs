@@ -3,7 +3,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
-import { render, PAGES, header, footer, strip, NAV } from '../scripts/build-shell.mjs';
+import { render, PAGES, header, footer, strip, NAV, HINT } from '../scripts/build-shell.mjs';
 
 const root = new URL('../', import.meta.url);
 const read = (f) => readFileSync(new URL(f, root), 'utf8');
@@ -61,16 +61,16 @@ test('Post a job: in the landing hero, under the carousel and in the signed-in a
   const index = read('index.html');
   assert.match(index, /<div class="xs-ctas"><a class="xs-btn xs-white" href="#jobs">See open contracts<\/a><a class="xs-btn xs-gold" href="\/post">Post a job<\/a>/);
   assert.ok(index.includes('<p class="info-more"><a href="/contracts">All contracts and how they work</a><a href="/post">Post a job</a></p>'));
-  const app = read('app.js');
-  assert.match(app, /post: '\/post', postEquity: '\/post\?pay=equity'/);
-  assert.ok(app.includes('<a class="ap-btn ap-btn-gold ap-post" href="${L.post}">'), 'top bar');
+  const app = read('app.js'), top = read('topbar.js');
+  assert.match(top, /post: '\/post', postEquity: '\/post\?pay=equity'/);
+  assert.ok(top.includes('<a class="ap-btn ap-btn-gold ap-post" href="${L.post}"'), 'top bar');
   assert.ok(app.includes('<a class="ap-lk ap-lk-1" href="${L.postEquity}">Offer equity for work</a>'), 'Build box');
   assert.ok(app.includes('<a class="ap-compose-post" href="${L.post}">'), 'composer');
   assert.ok(!/postUrl/.test(app + read('home.js') + read('contracts.js')), 'no client uses the old postUrl any more');
 });
 
 test('no bJobsX link posts a job through bchatx.com/room/new (only "Start an organisation" and the deal room go there)', () => {
-  const sources = [...htmlFiles, 'app.js', 'home.js', 'contracts.js', 'post.js', 'bwx.js', 'studio.js', ...readdirSync(new URL('lib/', root)).map((f) => 'lib/' + f)];
+  const sources = [...htmlFiles, 'app.js', 'topbar.js', 'home.js', 'contracts.js', 'post.js', 'bwx.js', 'studio.js', ...readdirSync(new URL('lib/', root)).map((f) => 'lib/' + f)];
   for (const f of sources) {
     const text = read(f);
     // Links written out in HTML.
@@ -80,7 +80,7 @@ test('no bJobsX link posts a job through bchatx.com/room/new (only "Start an org
     }
   }
   // app.js builds them from L.org: only those two labels use it.
-  const app = read('app.js');
+  const app = read('app.js') + read('topbar.js');
   for (const m of app.matchAll(/href="\$\{L\.org\}"[^>]*>([^<]*)/g)) assert.match(m[1], /Start an organisation|Raise in a private deal room/, m[1]);
   assert.ok(!/Offer equity for work[^\n]*L\.org|L\.org[^\n]*Offer equity for work/.test(app));
   assert.ok(!/Post a (job|contract)[^\n]*room\/new|room\/new[^\n]*Post a (job|contract)/i.test(htmlFiles.map(read).join('\n') + app));
@@ -95,4 +95,34 @@ test('What you can post: the approved body, no draft header or editorial notes',
   const page = read('what-you-can-post.html');
   for (const s of ['Work you can post', 'Testing your own systems:', 'Until bJobsX has age checks, 18+ posts are seen only by you and our moderators.', 'unless you say the promotion is approved by an FCA-authorised firm or is exempt', 'For the beta, you must live in the UK to post.', 'bCorp never holds the money.', "Posted and paid by &lt;legal name&gt; ($handle). bCorp runs bJobsX and isn't a party", 'Monday to Friday, 09:00–17:30 UK time.', 'with "Appeal" in the subject']) assert.ok(page.includes(s), s);
   for (const s of ['DRAFT', 'CEO review', 'RULING-2026', '§7', 'bit-sign #715']) assert.ok(!page.includes(s), s);
+});
+
+// RB 15 Nov: "the navbar isn't persisting across the different pages". Signed in, every page wears the home's top bar.
+test('signed in: one top bar for every page (topbar.js), drawn by the home and mounted everywhere else', () => {
+  const top = read('topbar.js'), app = read('app.js'), bwx = read('bwx.js');
+  // One source: the home uses the shared markup, and keeps no copy of its own.
+  assert.ok(app.includes("${topHTML('home')}") && app.includes("${tabsHTML('home')}"));
+  assert.ok(!app.includes('<header class="ap-top">') && !app.includes('<nav class="ap-tabs"'));
+  for (const label of ['Search people and contracts', "'Home', '/'", "'People', '/browse'", "'Contracts', '/contracts'", "'Messages', L.msg", 'Notifications', 'For organisations', 'Post a job', 'Sign out']) assert.ok(top.includes(label), label);
+  // Every page loads bwx.js (the shell footer), and bwx.js mounts the bar once the session names a wallet.
+  assert.ok(bwx.includes("import('/topbar.js').then((m) => (k ? m.mount(k) : m.unmount()))"));
+  assert.match(bwx, /hint\(!!j\.identityKey\); top\(j\.identityKey \|\| null\);/);
+  // The home draws its own: mount() leaves a page that has #app alone.
+  assert.ok(top.includes("if (!identityKey || document.getElementById('app')) return false;"));
+  // "For organisations" works off the home too.
+  assert.ok(top.includes("location.assign('/#ap-org')") && app.includes("if (location.hash === '#ap-org') gotoOrg();"));
+});
+
+test('signed in: the shell header is hidden before paint on every page but the landing; signed out nothing changes', () => {
+  for (const f of Object.keys(PAGES)) {
+    const page = read(f), n = page.split(HINT).length - 1;
+    assert.equal(n, f === 'index.html' ? 0 : 1, `${f}: hint script`);
+    if (n) assert.ok(page.indexOf(HINT) < page.indexOf('<header class="xs-bar">'), `${f}: hint runs before the header`);
+    assert.equal((page.match(/<header class="xs-bar">/g) || []).length, 1, `${f}: the signed-out header is still there`);
+  }
+  assert.match(HINT, /localStorage\.getItem\('bjx-in'\)==='1'/);
+  const css = read('shell.css');
+  assert.ok(css.includes('html.bjx-top .xs-strip,html.bjx-top body>.xs-bar{display:none}'));
+  assert.ok(!/(^|[},])\s*\.xs-(strip|bar)\{display:none/.test(css), 'never hidden without bjx-top');
+  assert.ok(read('app.css').includes('#app.ap-chrome{display:contents}'));
 });

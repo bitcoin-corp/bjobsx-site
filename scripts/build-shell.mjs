@@ -34,6 +34,11 @@ export function strip() {
   return `<aside class="xs-strip" aria-label="bWalletX"><a href="https://bwalletx.com/"><svg viewBox="23 8 74 100" aria-hidden="true" focusable="false"><defs><linearGradient id="xs-sg" gradientUnits="userSpaceOnUse" x1="0" y1="12" x2="0" y2="105"><stop offset="0" stop-color="#FFE58A"/><stop offset=".55" stop-color="#FFD24D"/><stop offset="1" stop-color="#C98F00"/></linearGradient></defs><path fill="url(#xs-sg)" d="${B_PATH}"/></svg><span>Part of <b>bWalletX</b></span><span class="xs-go" aria-hidden="true">&rarr;</span></a></aside>`;
 }
 
+/** Signed in last time (the bjx-in hint, set by bwx.js)? Then hide the strip and header before they paint: topbar.js
+ *  puts the signed-in bar there once the session is confirmed, and bwx.js takes the class off if it isn't. Not on the
+ *  landing, which swaps the whole page for the app instead. */
+export const HINT = `<script>try{if(localStorage.getItem('bjx-in')==='1')document.documentElement.classList.add('bjx-top')}catch(e){}</script>`;
+
 export function header(current = '') {
   const cur = (href) => (href === current ? ' aria-current="page"' : '');
   const links = NAV.map(([href, label]) => `<a href="${href}"${cur(href)}>${label}</a>`).join('');
@@ -51,7 +56,7 @@ export function footer() {
 <script src="/bwx.js"></script>`;
 }
 
-const BLOCKS = { strip: () => strip(), header: (cur) => header(cur), footer: () => footer() };
+const BLOCKS = { strip: (cur, file) => (file === 'index.html' ? strip() : `${HINT}\n${strip()}`), header: (cur) => header(cur), footer: () => footer() };
 
 /** One page with its shell blocks filled in. Throws if a marker is missing. */
 export function stamp(file, text) {
@@ -60,7 +65,7 @@ export function stamp(file, text) {
   for (const [name, make] of Object.entries(BLOCKS)) {
     const re = new RegExp(`(<!-- shell:${name} -->)[\\s\\S]*?(<!-- /shell:${name} -->)`);
     if (!re.test(out)) throw new Error(`${file} has no <!-- shell:${name} --> block.`);
-    out = out.replace(re, (_, a, b) => `${a}\n${make(PAGES[file])}\n${b}`);
+    out = out.replace(re, (_, a, b) => `${a}\n${make(PAGES[file], file)}\n${b}`);
   }
   return out;
 }

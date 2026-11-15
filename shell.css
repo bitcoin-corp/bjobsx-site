@@ -52,3 +52,10 @@ body>.xs-bar .xs-wrap{padding:0 16px}
 .xs-foot p{margin:0}
 
 .legal .note{border:1px solid rgba(255,210,77,.35);background:rgba(255,210,77,.07);border-radius:12px;padding:12px 14px;margin:8px 0 18px}
+
+/* Signed in (RB 15 Nov): every page wears the home's top bar (topbar.js, styled by app.css) instead of the strip and
+   header, so the bar stays as you move between pages. bjx-top is set before paint from the bjx-in hint; bjx-top-on
+   once the bar is in. Until then a bar-sized space holds the layout. Signed out: nothing here applies. */
+html.bjx-top .xs-strip,html.bjx-top body>.xs-bar{display:none}
+html.bjx-top:not(.bjx-top-on) body::before{content:"";display:block;height:60px;background:#0a0a0b;border-bottom:1px solid rgba(255,210,77,.2)}
+@media(max-width:767px){html.bjx-top body{padding-bottom:calc(60px + env(safe-area-inset-bottom))}}

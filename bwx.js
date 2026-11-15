@@ -138,8 +138,16 @@
   const touch = async () => { try { const f = await C.discoverBwalletX?.(800); if (f && f.wallet) await f.wallet.getPublicKey({ identityKey: true }); } catch {} };
   // bjx-in: a hint for the home page that this browser is signed in (it hides the landing while the session is checked).
   const hint = (on) => { try { if (on) localStorage.setItem('bjx-in', '1'); else localStorage.removeItem('bjx-in'); } catch {} };
-  document.addEventListener('bjobsx-wallet', (e) => hint(!!e.detail?.identityKey));
+  // Signed in, every page but the home wears the home's top bar in place of the shell header (topbar.js; the home
+  // draws its own in app.js). bjx-top is set before paint from the bjx-in hint (see build-shell.mjs).
+  const root = document.documentElement;
+  const top = (k) => {
+    if (document.getElementById('app') && !document.querySelector('#app.ap-chrome')) return;
+    if (!k && !root.classList.contains('bjx-top')) return;
+    import('/topbar.js').then((m) => (k ? m.mount(k) : m.unmount())).catch(() => root.classList.remove('bjx-top', 'bjx-top-on'));
+  };
+  document.addEventListener('bjobsx-wallet', (e) => { hint(!!e.detail?.identityKey); top(e.detail?.identityKey || null); });
   window.bjxSignOut = disconnect;
-  fetch('/api/bwalletx/session', { credentials: 'same-origin' }).then((r) => r.json()).then((j) => { setKey(j.identityKey || null); hint(!!j.identityKey); if (j.identityKey) touch(); }).catch(draw);
+  fetch('/api/bwalletx/session', { credentials: 'same-origin' }).then((r) => r.json()).then((j) => { setKey(j.identityKey || null); hint(!!j.identityKey); top(j.identityKey || null); if (j.identityKey) touch(); }).catch(() => { top(null); draw(); });
   draw();
 })();
