@@ -175,8 +175,9 @@ main{padding-bottom:40px}
     <div id="profile"></div>
 
     <div class="pubbar" id="pubbar" hidden>
-      <span class="q" id="pubQ"></span>
+      <span class="q"><span id="pubQ"></span> <a class="gold" id="pubTx" target="_blank" rel="noopener" hidden>See it on chain</a></span>
       <button class="btn btn-gold" type="button" id="pubSave">Publish</button>
+      <p class="hint" style="flex:1 1 100%;margin:0">Publishing writes your public sections on chain, signed by your wallet. You pay only the network fee. It’s permanent: publishing again changes what bJobsX shows, but earlier versions stay on chain.</p>
       <p class="msg" id="pubMsg" aria-live="polite" style="flex:1 1 100%;margin:0"></p>
     </div>
 

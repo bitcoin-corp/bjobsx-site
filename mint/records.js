@@ -1,13 +1,15 @@
 // bJobsX private profile records: pure helpers (browser + node). No network, no wallet state.
 // Same shape as bvideox.com mint/records.js; the item is a profile section instead of a video.
 //
+// (The PUBLIC PROFILE that Publish writes is further down: "the public profile, on chain".)
+//
 // Each record is encrypted with the owner's own keys (BRC-100 wallet.encrypt, BRC-2, protocol [2,'bjobsx records'],
 // counterparty self, a fresh random key id per record). The chain shows that a record exists, its size and time; only
 // the owner's 12 words open it. Publishing one record in clear is opt-in ("Make public").
 //
 // Output script (one per record, 0 sats):
 //   OP_FALSE OP_RETURN B <ciphertext> application/octet-stream binary | MAP SET app bjobsx type record v 1 enc brc2 kid <kid>
-// Public record (opt-in):
+// Public record (opt-in, one minted record in clear):
 //   OP_FALSE OP_RETURN B <json> application/json utf-8 | MAP SET app bjobsx type record-public v 1 reveal <txid:vout> kid <kid>
 //     | BRC3 <publicKey> <signature over sha256(json)>
 
@@ -272,4 +274,124 @@ export async function publicScript(wallet, rec, kid, outpoint) {
     s(MAP_PREFIX), s('SET'), s('app'), s(APP), s('type'), s('record-public'), s('v'), s(VERSION), s('reveal'), s(outpoint), s('kid'), s(kid),
     PIPE, s(SIG), s(publicKey), s(hex(signature)),
   ]);
+}
+
+// ── the public profile, on chain (Publish) ────────────────────────────────────
+// bJobsX hosts no profile data. Publish writes ONE transaction from the owner's wallet:
+//   out 0 (0 sats): OP_FALSE OP_RETURN B <json> application/json utf-8 | MAP SET app bjobsx type profile v 1
+//                   | BRC3 <identityKey> <signature hex>
+//   out 1 (1 sat):  P2PKH to the owner's profile key (the signing key below), so any address index finds it
+//   out 2 (1 sat):  P2PKH to the bJobsX profile directory (a public signpost key nobody owns), so Browse can list it
+// <json> is {"v":1,"app":"bjobsx","type":"profile","at":"<ISO time>","profile":{…only the ticked sections…}|null}.
+// The signature is the wallet's BRC-100 createSignature over sha256(<json bytes>), protocol [2,'bjobsx records'],
+// keyID 'public profile', counterparty 'anyone' (BRC-3). Anyone can check it: derive the signing key from the
+// identity key with the 'anyone' key (ProtoWallet('anyone').verifySignature({counterparty: identityKey, …})).
+// bWalletX pins [2,'bjobsx records'] to bjobsx.com, so no other site can make that key sign a profile in your name.
+// The newest valid profile (by its signed `at`) wins; profile null means "nothing public". Earlier ones stay on chain.
+export const PROFILE_TYPE = 'profile';
+export const PROFILE_KEY_ID = 'public profile';
+export const PROFILE_LABEL = 'bjobsx profile';
+export const PROFILE_MAX_BYTES = 64 * 1024;
+export const MARKER_SATS = 1;
+/** The directory key: BRC-42 from the 'anyone' key ([2,'bjobsx records'], keyID 'profile directory'). Public, so nobody owns it. */
+export const DIRECTORY_ADDRESS = '1PMF791xybPhwazLfFNGTpUPujb6XFz76B';
+export const DIRECTORY_SCRIPT = '76a914f526dc86eee0ea5434ae559bc24ba771689c6a1788ac';
+const SIG_HEX_MAX = 144; // DER signatures are at most 72 bytes
+
+/** The exact bytes that go on chain and are signed. */
+export const profileContent = (profile, at = new Date().toISOString()) =>
+  enc.encode(JSON.stringify({ v: 1, app: APP, type: PROFILE_TYPE, at, profile: profile && typeof profile === 'object' ? profile : null }));
+
+/** The profile output's script, from parts (pure). */
+export const profileScriptFrom = (json, identityKey, signatureHex) => opReturn([
+  s(B_PREFIX), Uint8Array.from(json), s('application/json'), s('utf-8'), PIPE,
+  s(MAP_PREFIX), s('SET'), s('app'), s(APP), s('type'), s(PROFILE_TYPE), s('v'), s(VERSION),
+  PIPE, s(SIG), s(identityKey), s(signatureHex),
+]);
+
+/** A profile output's json bytes, identity key and signature, or null. Says nothing about whether it verifies. */
+export function parseProfileScript(scriptHex) {
+  const p = readPushes(scriptHex);
+  if (!p || p.length !== 17) return null;
+  const t = (i) => dec.decode(p[i]);
+  if (t(0) !== B_PREFIX || t(2) !== 'application/json' || t(4) !== '|' || t(5) !== MAP_PREFIX || t(6) !== 'SET' || t(7) !== 'app' || t(8) !== APP
+    || t(9) !== 'type' || t(10) !== PROFILE_TYPE || t(11) !== 'v' || t(12) !== VERSION || t(13) !== '|' || t(14) !== SIG) return null;
+  const identityKey = t(15), sig = t(16);
+  if (!/^0[23][0-9a-f]{64}$/.test(identityKey) || !/^(?:[0-9a-f]{2}){8,72}$/.test(sig) || p[1].length > PROFILE_MAX_BYTES) return null;
+  return { json: p[1], identityKey, signature: unhex(sig) };
+}
+
+/** Read the signed JSON: { at, profile } or null when it isn't a bJobsX profile. */
+export function readProfileJson(json) {
+  let j;
+  try { j = JSON.parse(dec.decode(Uint8Array.from(json))); } catch { return null; }
+  if (!j || typeof j !== 'object' || j.v !== 1 || j.app !== APP || j.type !== PROFILE_TYPE || typeof j.at !== 'string' || !Number.isFinite(Date.parse(j.at))) return null;
+  if (j.profile !== null && (typeof j.profile !== 'object' || Array.isArray(j.profile))) return null;
+  return { at: new Date(Date.parse(j.at)).toISOString(), profile: j.profile };
+}
+
+/** Bytes of the publish transaction for a JSON of `jsonBytes` (estimate: the signature is taken at its longest). */
+export function profileTxBytes(jsonBytes) {
+  const parts = [B_PREFIX.length, jsonBytes, 16, 5, 1, MAP_PREFIX.length, 3, 3, APP.length, 4, PROFILE_TYPE.length, 1, VERSION.length, 1, SIG.length, 66, SIG_HEX_MAX];
+  const script = 2 + parts.reduce((a, n) => a + pushLen(n), 0);
+  return TX_OVERHEAD_BYTES + 8 + (script < 0xfd ? 1 : script <= 0xffff ? 3 : 5) + script + 2 * PREMIUM_OUTPUT_BYTES;
+}
+/** What publishing costs: the network fee plus the two 1-sat markers. No bJobsX charge. */
+export const profileCost = (jsonBytes, satPerKb) => { const fee = feeSats(profileTxBytes(jsonBytes), satPerKb); return { feeSats: fee, markerSats: 2 * MARKER_SATS, totalSats: fee + 2 * MARKER_SATS }; };
+
+/** P2PKH locking script for a compressed public key (hex). */
+export async function p2pkhForKey(pubHex) {
+  return '76a914' + hex(ripemd160(await sha256(unhex(pubHex)))) + '88ac';
+}
+
+/**
+ * Sign the profile with the wallet and build the publish outputs. -> { outputs, identityKey, signerKey }
+ * The wallet asks once for [2,'bjobsx records'] with counterparty 'anyone' (signing, never decrypting).
+ */
+export async function profileOutputs(wallet, json) {
+  const { publicKey: identityKey } = await wallet.getPublicKey({ identityKey: true });
+  const { publicKey: signerKey } = await wallet.getPublicKey({ protocolID: PROTOCOL, keyID: PROFILE_KEY_ID, counterparty: 'anyone', forSelf: true });
+  const { signature } = await wallet.createSignature({ data: Array.from(await sha256(Uint8Array.from(json))), protocolID: PROTOCOL, keyID: PROFILE_KEY_ID, counterparty: 'anyone' });
+  return {
+    identityKey, signerKey,
+    outputs: [
+      { lockingScript: profileScriptFrom(json, identityKey, hex(signature)), satoshis: 0, outputDescription: 'Public profile, signed by you' },
+      { lockingScript: await p2pkhForKey(signerKey), satoshis: MARKER_SATS, outputDescription: 'Profile marker (finds your profile)' },
+      { lockingScript: DIRECTORY_SCRIPT, satoshis: MARKER_SATS, outputDescription: 'bJobsX directory marker (lists it in Browse)' },
+    ],
+  };
+}
+
+// RIPEMD-160 (for P2PKH in the browser, which has only SHA in WebCrypto). Checked against @bsv/sdk in the tests.
+const RL = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 7, 4, 13, 1, 10, 6, 15, 3, 12, 0, 9, 5, 2, 14, 11, 8, 3, 10, 14, 4, 9, 15, 8, 1, 2, 7, 0, 6, 13, 11, 5, 12, 1, 9, 11, 10, 0, 8, 12, 4, 13, 3, 7, 15, 14, 5, 6, 2, 4, 0, 5, 9, 7, 12, 2, 10, 14, 1, 3, 8, 11, 6, 15, 13];
+const RR = [5, 14, 7, 0, 9, 2, 11, 4, 13, 6, 15, 8, 1, 10, 3, 12, 6, 11, 3, 7, 0, 13, 5, 10, 14, 15, 8, 12, 4, 9, 1, 2, 15, 5, 1, 3, 7, 14, 6, 9, 11, 8, 12, 2, 10, 0, 4, 13, 8, 6, 4, 1, 3, 11, 15, 0, 5, 12, 2, 13, 9, 7, 10, 14, 12, 15, 10, 4, 1, 5, 8, 7, 6, 2, 13, 14, 0, 3, 9, 11];
+const SL = [11, 14, 15, 12, 5, 8, 7, 9, 11, 13, 14, 15, 6, 7, 9, 8, 7, 6, 8, 13, 11, 9, 7, 15, 7, 12, 15, 9, 11, 7, 13, 12, 11, 13, 6, 7, 14, 9, 13, 15, 14, 8, 13, 6, 5, 12, 7, 5, 11, 12, 14, 15, 14, 15, 9, 8, 9, 14, 5, 6, 8, 6, 5, 12, 9, 15, 5, 11, 6, 8, 13, 12, 5, 12, 13, 14, 11, 8, 5, 6];
+const SR = [8, 9, 9, 11, 13, 15, 15, 5, 7, 7, 8, 11, 14, 14, 12, 6, 9, 13, 15, 7, 12, 8, 9, 11, 7, 7, 12, 7, 6, 15, 13, 11, 9, 7, 15, 11, 8, 6, 6, 14, 12, 13, 5, 14, 13, 13, 7, 5, 15, 5, 8, 11, 14, 14, 6, 14, 6, 9, 12, 9, 12, 5, 15, 8, 8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11];
+const KL = [0x00000000, 0x5a827999, 0x6ed9eba1, 0x8f1bbcdc, 0xa953fd4e];
+const KR = [0x50a28be6, 0x5c4dd124, 0x6d703ef3, 0x7a6d76e9, 0x00000000];
+const rol = (x, n) => (x << n) | (x >>> (32 - n));
+const fr = (j, x, y, z) => (j < 16 ? x ^ y ^ z : j < 32 ? (x & y) | (~x & z) : j < 48 ? (x | ~y) ^ z : j < 64 ? (x & z) | (y & ~z) : x ^ (y | ~z));
+export function ripemd160(msg) {
+  const m = Uint8Array.from(msg), bits = m.length * 8;
+  const len = (((m.length + 8) >> 6) + 1) << 6;
+  const b = new Uint8Array(len); b.set(m); b[m.length] = 0x80;
+  const dv = new DataView(b.buffer);
+  dv.setUint32(len - 8, bits >>> 0, true); dv.setUint32(len - 4, Math.floor(bits / 2 ** 32), true);
+  let h0 = 0x67452301, h1 = 0xefcdab89, h2 = 0x98badcfe, h3 = 0x10325476, h4 = 0xc3d2e1f0;
+  const X = new Array(16);
+  for (let o = 0; o < len; o += 64) {
+    for (let i = 0; i < 16; i++) X[i] = dv.getUint32(o + i * 4, true);
+    let al = h0, bl = h1, cl = h2, dl = h3, el = h4, ar = h0, br = h1, cr = h2, dr = h3, er = h4;
+    for (let j = 0; j < 80; j++) {
+      let t = (rol((al + fr(j, bl, cl, dl) + X[RL[j]] + KL[j >> 4]) | 0, SL[j]) + el) | 0;
+      al = el; el = dl; dl = rol(cl, 10); cl = bl; bl = t;
+      t = (rol((ar + fr(79 - j, br, cr, dr) + X[RR[j]] + KR[j >> 4]) | 0, SR[j]) + er) | 0;
+      ar = er; er = dr; dr = rol(cr, 10); cr = br; br = t;
+    }
+    const t = (h1 + cl + dr) | 0;
+    h1 = (h2 + dl + er) | 0; h2 = (h3 + el + ar) | 0; h3 = (h4 + al + br) | 0; h4 = (h0 + bl + cr) | 0; h0 = t;
+  }
+  const out = new Uint8Array(20), ov = new DataView(out.buffer);
+  [h0, h1, h2, h3, h4].forEach((h, i) => ov.setUint32(i * 4, h >>> 0, true));
+  return out;
 }

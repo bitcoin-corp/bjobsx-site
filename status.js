@@ -1,5 +1,6 @@
 // The Live / Coming checklist, shared by the home page and the profile page. Rows that depend on the server are
-// checked live: sign-in (session secret set), publishing + Browse (push /v1/job-profiles deployed), real minting (payee set).
+// checked live: sign-in (session secret set), publishing + Browse (the chain index answers: /api/browse live), real
+// minting (payee set).
 // bWalletX must pin [2,'bjobsx records'] to bjobsx.com (pinnedProtocols v3) before real mints can run. Flip when shipped.
 export const WALLET_PIN_SHIPPED = false;
 const esc = (t) => String(t ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -18,6 +19,7 @@ export async function checklist(el, st) {
     ['Import the LinkedIn export ZIP or CSVs, read in your browser', true],
     ['See your profile: headline, positions, education, skills', true],
     ['Choose which sections are public (all private by default)', true],
+    ['Publish your public sections on chain, signed by your wallet', x.publish],
     ['Your public page at bjobsx.com/u/your-name', x.publish],
     ['Pick your own username', x.publish],
     ['Browse public profiles', x.publish],

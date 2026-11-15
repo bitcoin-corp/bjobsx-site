@@ -3,18 +3,17 @@
 //     GET pay.bwallet.space/api/paymail/lookup?key=<identityKey> -> { paymail, alias }
 //     GET pay.bwallet.space/api/paymail/id/<alias>@bwalletx.com   -> { pubkey }   (alias -> key)
 //     GET pay.bwallet.space/api/paymail/profile/<paymail>          -> { name, avatar }
-// - A chosen username and the PUBLIC sections of a profile live on the bWalletX push server
-//   (bitcoin-corp/bwalletx-push, /v1/job-profiles, wallet-signed). The imported LinkedIn data itself never reaches
-//   any server: it stays in the owner's browser, and only what they tick "public" is sent here.
-//   Until /v1/job-profiles is deployed, every profile uses its paymail alias as its name and publishing says "Coming".
+// - A chosen username lives on the bWalletX push server (bitcoin-corp/bwalletx-push, /v1/job-profiles, wallet-signed).
+//   Only the name: bJobsX never sends profile content there (it always sends profile null).
+// - The PUBLIC profile lives on chain, signed by the owner's wallet (mint/records.js, read by api/_chain.js). The
+//   imported LinkedIn data itself never reaches any server: it stays in the owner's browser.
+//   Until /v1/job-profiles is deployed, every profile uses its paymail alias as its name.
 export const PUSH_API = () => (process.env.PUSH_API || 'https://push.bwalletx.com').replace(/\/$/, '');
 export const PAYMAIL_API = () => (process.env.PAYMAIL_API || 'https://pay.bwallet.space/api/paymail').replace(/\/$/, '');
 export const PAYMAIL_DOMAIN = 'bwalletx.com';
 export const KEY_RE = /^0[23][0-9a-f]{64}$/;
 export const NAME_RE = /^[a-z0-9][a-z0-9_.-]{1,39}$/; // what a /u/<name> can look like (paymail aliases may contain '.')
 export const USERNAME_RE = /^[a-z0-9][a-z0-9_-]{2,29}$/; // what a chosen username can be
-/** The public profile JSON is capped (the push server enforces the same). */
-export const PROFILE_MAX_BYTES = 64 * 1024;
 
 export const get = async (url, ms = 2500) => {
   try {
@@ -37,7 +36,7 @@ export async function keyForAlias(alias) {
   return KEY_RE.test(k) ? k : null;
 }
 
-/** The push server's job profile. { live:false } when the endpoint isn't deployed yet. */
+/** The push server's username row (its `profile` field is ignored). { live:false } when the endpoint isn't deployed yet. */
 export async function profileBy(q) {
   const r = await get(`${PUSH_API()}/v1/job-profiles?${new URLSearchParams(q)}`);
   if (r.status === 200 && r.json) return { live: true, row: r.json };
@@ -46,8 +45,12 @@ export async function profileBy(q) {
   return { live: false, row: null };
 }
 
-/** What a profile page shows, for a username or an identity key. Null when nobody has that name. */
-export async function loadProfile({ name, identityKey }) {
+/**
+ * What a profile page shows, for a username or an identity key. Null when nobody has that name.
+ * The username comes from the push server (or the paymail alias); the profile comes from chain (api/_chain.js),
+ * never from a stored copy. `hint` is a txid the owner just published (only used for the owner's own view).
+ */
+export async function loadProfile({ name, identityKey, hint = null }) {
   let key = identityKey || null, saved = null, live = false;
   if (!key && name) {
     const s = await profileBy({ name });
@@ -56,14 +59,22 @@ export async function loadProfile({ name, identityKey }) {
     else key = await keyForAlias(name);
   }
   if (!key) return null;
-  if (!saved) { const s = await profileBy({ identity_key: key }); live = live || s.live; saved = s.row?.username ? s.row : null; }
-  const pm = await paymailFor(key);
+  const { latestProfile } = await import('./_chain.js'); // only profile routes load the chain reader (@bsv/sdk)
+  const [byKey, pm, chain] = await Promise.all([
+    saved ? null : profileBy({ identity_key: key }),
+    paymailFor(key),
+    latestProfile(key, { hint }),
+  ]);
+  if (byKey) { live = live || byKey.live; saved = byKey.row?.username ? byKey.row : null; }
+  const on = chain && !chain.unavailable ? chain : null;
   return {
     identityKey: key,
     paymail: pm?.paymail || null, alias: pm?.alias || null, displayName: pm?.name || null, avatar: pm?.avatar || null,
     username: saved?.username || pm?.alias || null, usernameSaved: !!saved?.username,
-    profile: saved?.profile || null, updatedAt: saved?.updatedAt || null,
+    profile: on?.profile || null, updatedAt: on?.updatedAt || null,
     settingsLive: live,
+    // Additions (on-chain publish): where the profile is, and whether the chain could be read just now.
+    profileTxid: on?.txid || null, chainOk: !chain?.unavailable,
   };
 }
 

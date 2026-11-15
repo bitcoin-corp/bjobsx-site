@@ -35,11 +35,11 @@
   <section class="hero">
     <p class="kicker">Browse <span class="badge" id="bBadge"></span></p>
     <h1>Profiles on bJobsX.</h1>
-    <p class="mute" style="max-width:620px;margin:0">Each profile shows only what its owner chose to make public. No wallet needed to look.</p>
+    <p class="mute" style="max-width:620px;margin:0">Each profile shows only what its owner chose to make public, read from the chain and signed by its owner. No wallet needed to look.</p>
   </section>
   <div class="pgrid" id="list" aria-live="polite"></div>
   <p class="state" id="state">Loading profiles…</p>
-  <p class="mute" style="font-size:14px;margin-top:30px">Want yours here? <a class="gold" href="/studio">Open your profile</a>, import your LinkedIn data and make a section public.</p>
+  <p class="mute" style="font-size:14px;margin-top:30px">Want yours here? <a class="gold" href="/studio">Open your profile</a>, import your LinkedIn data and publish a section.</p>
 </main>
 <footer>
   bJobsX · part of the bWalletX family · THE BITCOIN CORPORATION LTD, company no. 16735102
@@ -54,7 +54,7 @@
     badge(j.live);
     const ps = j.profiles || [];
     $('list').innerHTML = ps.map((p) => `<a class="pc" href="/u/${encodeURIComponent(p.username)}"><span class="av" aria-hidden="true">${esc((p.name || p.username).charAt(0).toUpperCase())}</span><span style="min-width:0"><b>${esc(p.name || p.username)}</b>${p.headline ? `<span class="h">${esc(p.headline)}</span>` : ''}<span class="u">bjobsx.com/u/${esc(p.username)}</span></span></a>`).join('');
-    $('state').textContent = ps.length ? '' : j.live ? 'No public profiles yet. Be the first.' : 'Public profiles open shortly.';
+    $('state').textContent = ps.length ? '' : j.live ? 'No public profiles yet. Be the first.' : 'We couldn’t read profiles from the chain just now. Try again shortly.';
     $('state').hidden = !!ps.length;
   }).catch(() => { badge(false); $('state').textContent = 'Could not load profiles. Try again shortly.'; });
 })();
