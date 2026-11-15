@@ -169,7 +169,7 @@ test('payload: licence, promotion, legal name and UK residence go through when g
 // ── config ───────────────────────────────────────────────────────────────────
 test('GET /api/post-config: postApi only when CONTRACTS_POST_API is https; Veriff link from VERIFF_URL or the default', () => {
   assert.deepEqual(postConfig({}), { postApi: null, veriffUrl: DEFAULT_VERIFF_URL });
-  assert.deepEqual(postConfig({ CONTRACTS_POST_API: 'https://www.bit-sign.online', VERIFF_URL: 'https://bit-sign.online/kyc?site=bjobsx' }), { postApi: 'https://www.bit-sign.online', veriffUrl: 'https://bit-sign.online/kyc?site=bjobsx' });
+  assert.deepEqual(postConfig({ CONTRACTS_POST_API: 'https://www.bit-sign.online', VERIFF_URL: 'https://www.bchatx.com/kyc?site=bjobsx' }), { postApi: 'https://www.bit-sign.online', veriffUrl: 'https://www.bchatx.com/kyc?site=bjobsx' });
   assert.deepEqual(postConfig({ CONTRACTS_POST_API: 'javascript:alert(1)', VERIFF_URL: 'http://x' }), { postApi: null, veriffUrl: DEFAULT_VERIFF_URL });
   const res = { code: 0, headers: {}, body: null, setHeader(k, v) { this.headers[k.toLowerCase()] = v; }, status(c) { this.code = c; return this; }, json(o) { this.body = o; return this; } };
   delete process.env.CONTRACTS_POST_API;

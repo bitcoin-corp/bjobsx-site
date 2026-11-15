@@ -20,7 +20,7 @@ const lsDel = () => { try { localStorage.removeItem(DRAFT_KEY); } catch {} };
 let d = cleanDraft(lsGet());
 let tried = false;
 let who = { identityKey: null, alias: null };
-let veriffUrl = 'https://bit-sign.online/kyc';
+let veriffUrl = 'https://www.bchatx.com/kyc';
 let client = createPostClient({});
 const configP = fetch('/api/post-config', { headers: { accept: 'application/json' } })
   .then((r) => (r.ok ? r.json() : null))

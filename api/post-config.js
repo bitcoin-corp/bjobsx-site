@@ -4,7 +4,7 @@
 //              pending_review). null until it's set: /post then works as a form and preview, and says posting opens soon.
 //   veriffUrl  env VERIFF_URL: where a poster runs the ID check (Veriff) when the registry says it's needed.
 const httpsOnly = (v) => { const s = String(v || '').trim(); return /^https:\/\/[a-z0-9.-]+(?::\d+)?(?:\/[^\s"'<>]*)?$/i.test(s) ? s : ''; };
-export const DEFAULT_VERIFF_URL = 'https://bit-sign.online/kyc';
+export const DEFAULT_VERIFF_URL = 'https://www.bchatx.com/kyc';
 
 export function postConfig(env = process.env) {
   return {
