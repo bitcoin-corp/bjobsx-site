@@ -10,8 +10,8 @@
 //   /api/browse        public profiles (push server)
 //   this browser       records minted and your LinkedIn import (localStorage, written by /studio)
 // Posting happens on chain in bChatX (the composer opens it); messages live in bMessageX.
-import { esc, posterLine, statusLabel, tokenPayNote } from '/lib/contracts-view.js';
-import { postHTML, BCHATX } from '/lib/feed-view.js';
+import { esc, posterLine, statusLabel, payNotes, hasShares, paysBsv, isTokenPay } from '/lib/contracts-view.js';
+import { postHTML, hueFor, BCHATX } from '/lib/feed-view.js';
 
 const L = {
   feed: `${BCHATX}/feed`, board: `${BCHATX}/s/bjobs`, chat: `${BCHATX}/`,
@@ -47,7 +47,11 @@ const ico = (n, cls = 'ap-i') => `<svg class="${cls}" viewBox="0 0 24 24" fill="
 const B_MARK = '<svg viewBox="23 8 74 100" aria-hidden="true" focusable="false"><path fill="currentColor" d="M45 12V72H27V30Z M27 72a33 33 0 1 1 66 0a33 33 0 1 1-66 0Z M45 72a15 15 0 1 0 30 0a15 15 0 1 0-30 0Z"/></svg>';
 
 let me = { identityKey: '', name: '', paymail: '', avatar: '', headline: '', linkedin: false, username: '' };
-let contracts = [], people = null, postUrl = null;
+let contracts = [], people = null, postUrl = null, posts = null, filt = 'all';
+// A plain filter: it only hides cards, never sorts or features them.
+const FILTERS = [['all', 'All'], ['bsv', 'Paid in BSV'], ['equity', 'Pays in equity (shares only)'], ['tokens', 'Paid in tokens']];
+const FILTER_FN = { bsv: paysBsv, equity: hasShares, tokens: isTokenPay };
+const FILTER_EMPTY = { bsv: 'No open contracts pay in BSV right now.', equity: 'No open contracts pay in equity right now.', tokens: 'No open contracts pay in tokens right now.' };
 
 // ── avatar ───────────────────────────────────────────────────────────────────
 function avatar(cls) {
@@ -124,7 +128,8 @@ function shell() {
     </section>
     <section class="ap-card ap-box ap-org" id="ap-org" tabindex="-1" aria-labelledby="ap-org-h">
       <h2 id="ap-org-h">${ico('org')} Your organisation</h2>
-      <p class="ap-note">Start it, issue its token and agree terms with your own investors. You issue them; it all runs in bChatX.</p>
+      <p class="ap-note">It's yours: offer shares for work, issue your token and agree terms with your own investors, all in bChatX.</p>
+      <a class="ap-act ap-act-1" href="${L.org}" target="_blank" rel="noopener"><b>Offer equity for work${ARR}</b><span>Post a contract that pays in shares of your company.</span></a>
       <a class="ap-act" href="${L.org}" target="_blank" rel="noopener"><b>Start an organisation${ARR}</b><span>A bChatX room for your partners, with founding terms.</span></a>
       <a class="ap-act" href="${L.token}" target="_blank" rel="noopener"><b>Issue a token${ARR}</b><span>Your token, gating your organisation's room.</span></a>
       <a class="ap-act" href="${L.org}" target="_blank" rel="noopener"><b>Raise in a private deal room${ARR}</b><span>Your deal room in bChatX, where you agree terms with your own investors.</span></a>
@@ -142,9 +147,10 @@ function shell() {
         <a data-post-contract href="#" hidden>${ico('contracts')}Post a contract</a>
       </div>
     </section>
-    <div class="ap-sep"><span>New contracts</span></div>
+    <div class="ap-filt" role="group" aria-label="Filter the feed">${FILTERS.map(([k, t]) => `<button type="button" data-filt="${k}" aria-pressed="${k === 'all'}">${esc(t)}</button>`).join('')}</div>
+    <div class="ap-sep"><span data-sep-c>New contracts</span></div>
     <div class="ap-stream" data-contracts-stream aria-live="polite"><div class="ap-card ap-skel"></div></div>
-    <div class="ap-sep"><span>From the bChatX open feed</span><a href="${L.feed}" target="_blank" rel="noopener">Open in bChatX${ARR}</a></div>
+    <div class="ap-sep" data-posts-sep><span>From the bChatX open feed</span><a href="${L.feed}" target="_blank" rel="noopener">Open in bChatX${ARR}</a></div>
     <div class="ap-stream" data-posts aria-live="polite"><div class="ap-card ap-skel"></div><div class="ap-card ap-skel"></div></div>
   </main>
 
@@ -216,13 +222,13 @@ function contractCard(c) {
   const art = c.art ? `<img src="${esc(c.art)}" alt="" loading="lazy" decoding="async">` : `<span class="ap-ghost">${esc(c.ghost || c.scope)}</span>`;
   const status = c.status !== 'open' ? `<span class="ap-flag">${esc(statusLabel(c.status))}</span>` : '';
   return `<article class="ap-card ap-cc" style="--c:${esc(c.color)}" aria-labelledby="cc-${esc(c.id)}">
-  <header class="ap-ph-row"><span class="ap-pa"><span class="ap-av ap-av-s ap-av-b" aria-hidden="true">${B_MARK}</span></span><div class="ap-pm"><span class="ap-pn">${esc(c.poster?.house ? 'The Bitcoin Corporation Ltd' : c.poster?.name || '')}</span><span class="ap-pt">Posted a contract · ${esc(c.scope)}</span></div></header>
+  <header class="ap-ph-row"><span class="ap-pa">${c.poster?.house ? `<span class="ap-av ap-av-s ap-av-b" aria-hidden="true">${B_MARK}</span>` : `<span class="ap-av ap-av-s" style="--h:${hueFor(c.poster?.name || '')}" aria-hidden="true"><b>${esc((c.poster?.name || '?').charAt(0).toUpperCase())}</b></span>`}</span><div class="ap-pm"><span class="ap-pn">${esc(c.poster?.house ? 'The Bitcoin Corporation Ltd' : c.poster?.name || '')}</span><span class="ap-pt">Posted a contract · ${esc(c.scope)}</span></div></header>
   <a class="ap-cc-art" href="${esc(c.href)}"${tgt(c.href)} tabindex="-1" aria-hidden="true">${art}${status}<span class="ap-cc-chip"><i></i>${esc(c.scope)} · ${esc(c.kind)}</span></a>
   <div class="ap-cc-b">
     <h3 id="cc-${esc(c.id)}"><a href="${esc(c.href)}"${tgt(c.href)}>${esc(c.title)}</a></h3>
     <p>${esc(c.line)}</p>
-    <div class="ap-cc-m"><span class="ap-pay">${esc(c.pay)}</span>${c.time ? `<span>${esc(c.time)}</span>` : ''}<span>${esc(c.ref)}</span></div>
-    ${tokenPayNote(c) ? `<p class="ap-tok">${esc(tokenPayNote(c))}</p>` : ''}
+    <div class="ap-cc-m">${hasShares(c) ? '<span class="ap-eq">Equity</span>' : ''}<span class="ap-pay">${esc(c.pay)}</span>${c.time ? `<span>${esc(c.time)}</span>` : ''}<span>${esc(c.ref)}</span></div>
+    ${payNotes(c).map((n) => `<p class="ap-tok">${esc(n)}</p>`).join('')}
     <div class="ap-cc-f"><span class="ap-by">${esc(posterLine(c))}</span><a class="ap-btn ap-btn-gold ap-btn-s" href="${esc(c.href)}"${tgt(c.href)}>View</a></div>
   </div>
 </article>`;
@@ -231,17 +237,22 @@ function contractCard(c) {
 function paintContracts() {
   const open = contracts.filter((c) => c.status === 'open');
   $('[data-open-n]').textContent = open.length ? String(open.length) : '';
-  $('[data-oc]').innerHTML = open.slice(0, 5).map((c) => `<li><a href="${esc(c.href)}"${tgt(c.href)}><span class="ap-oc-t">${esc(c.title)}</span><span class="ap-oc-m"><b>${esc(c.pay)}</b> · ${esc(c.scope)}</span></a></li>`).join('') || '<li class="ap-muted">No open contracts right now.</li>';
+  $('[data-oc]').innerHTML = open.slice(0, 5).map((c) => `<li><a href="${esc(c.href)}"${tgt(c.href)}><span class="ap-oc-t">${esc(c.title)}</span><span class="ap-oc-m">${hasShares(c) ? '<i class="ap-eq ap-eq-s">Equity</i> ' : ''}<b>${esc(c.pay)}</b> · ${esc(c.scope)}</span></a></li>`).join('') || '<li class="ap-muted">No open contracts right now.</li>';
   const stream = $('[data-contracts-stream]');
-  const shown = open.slice(0, 2);
-  stream.innerHTML = shown.length ? shown.map(contractCard).join('') : '<p class="ap-card ap-empty">No open contracts right now. <a href="/contracts">See all contracts</a></p>';
+  const fn = FILTER_FN[filt];
+  const shown = fn ? open.filter(fn) : open.slice(0, 2);
+  $('[data-sep-c]').textContent = fn ? FILTERS.find(([k]) => k === filt)[1] : 'New contracts';
+  stream.innerHTML = shown.length ? shown.map(contractCard).join('') : `<p class="ap-card ap-empty">${esc(fn ? FILTER_EMPTY[filt] : 'No open contracts right now.')} <a href="/contracts">See all contracts</a></p>`;
   const post = $('[data-post-contract]');
   if (post) { post.hidden = !postUrl; if (postUrl) { post.href = postUrl; post.target = '_blank'; post.rel = 'noopener'; } }
 }
 
 // ── feed ─────────────────────────────────────────────────────────────────────
-function paintPosts(posts) {
+function paintPosts() {
   const el = $('[data-posts]');
+  // A filter shows contracts only; the posts come back with All.
+  $$('[data-posts-sep], [data-posts]').forEach((e) => { e.hidden = filt !== 'all'; });
+  if (filt !== 'all' || posts === null) return;
   const more = contracts.filter((c) => c.status === 'open').slice(2); // the rest of the open contracts, between posts
   if (!posts.length) {
     el.innerHTML = more.map(contractCard).join('') + `<p class="ap-card ap-empty">The bChatX feed didn't load just now. <a href="${L.feed}" target="_blank" rel="noopener">Open it in bChatX${ARR}</a></p>`;
@@ -322,6 +333,12 @@ function wire() {
     if (!e.target.closest('#ap-menu, #ap-notes')) shut();
   });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') shut(); });
+  $$('[data-filt]').forEach((b) => b.addEventListener('click', () => {
+    filt = b.dataset.filt;
+    $$('[data-filt]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    b.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    paintContracts(); paintPosts();
+  }));
   const dh = $('.ap-dock-h'), db = $('#ap-dock-b');
   dh.addEventListener('click', () => { const open = db.hidden; db.hidden = !open; dh.setAttribute('aria-expanded', String(open)); $('.ap-dock').classList.toggle('open', open); });
 }
@@ -364,6 +381,6 @@ export async function start(identityKey) {
   json('/api/browse').then(paintPeople);
   const feedP = json('/api/feed');
   await contractsP;
-  feedP.then((j) => paintPosts(Array.isArray(j?.posts) ? j.posts : []));
+  feedP.then((j) => { posts = Array.isArray(j?.posts) ? j.posts : []; paintPosts(); });
   return true;
 }
