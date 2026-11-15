@@ -369,7 +369,7 @@ export async function start(identityKey) {
     if (p && p.signedIn === false) { try { localStorage.removeItem('bjx-in'); } catch {} location.replace('/'); return; }
     const pg = p?.page;
     if (!pg) return;
-    me = { ...me, name: pg.displayName || pg.linkedin?.name || pg.alias || '', paymail: pg.paymail || '', avatar: pg.linkedin?.picture || pg.avatar || '', headline: pg.profile?.headline || '', linkedin: !!pg.linkedin, username: pg.username || '' };
+    me = { ...me, name: pg.displayName || pg.linkedin?.name || pg.alias || '', paymail: pg.paymail || '', avatar: pg.linkedin?.picture || pg.avatar || '', headline: pg.profile?.headline || '', linkedin: !!pg.linkedin || (pg.walletLinks || []).some((l) => l.provider === 'linkedin'), username: pg.username || '' };
     paintMe();
     if (people) paintPeople({ profiles: people, live: true });
   });

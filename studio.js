@@ -322,6 +322,12 @@ function account() {
 const dateText = (iso) => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); };
 function paintLinkedIn() {
   const li = pg.linkedin, on = !!pg.linkedinOn, b = $('liBody');
+  const inWallet = (pg.walletLinks || []).find((l) => l.provider === 'linkedin');
+  if (inWallet && !li) {
+    b.innerHTML = `<p class="nm" style="margin:0"><span class="ok-t">✓ LinkedIn linked in your wallet</span>${inWallet.handle ? ' · ' + esc(inWallet.handle) : ''}</p>`
+      + '<p class="hint">Your bWalletX holds this link, so every b*X site can see it. Manage it in your wallet.</p>';
+    return;
+  }
   if (li) {
     const pic = safeUrl(li.picture), init = esc((li.name || 'L').trim().charAt(0).toUpperCase());
     b.innerHTML = `<div class="li-who"><span class="li-av${pic ? '' : ' init'}" role="img" aria-label="${esc(li.name)} on LinkedIn"${pic ? ` style="background-image:url('${esc(pic)}')"` : ''}>${pic ? '' : init}</span>`
