@@ -89,21 +89,22 @@
   };
 
   // Connect 0.9.0, sign-in on the same phone: bWalletX signs in on its Connect card and sends the user back to this
-  // site's root (#bwx=ok…, often in a new tab), where resumeReturned() finishes it. That tab needs the challenge's
-  // sealed ticket for /api/bwalletx/verify, so it is kept here by nonce (it holds no secret: the challenge is public)
-  // with where to go next. Entries go once used, or after 10 minutes.
-  const TICKETS = 'bwx:tickets';
-  const tickets = (fn) => {
+  // site's root (#bwx=ok…, often in a new tab), where resumeReturned() finishes it. The challenge's sealed ticket is an
+  // HttpOnly cookie that tab sends to /api/bwalletx/verify by itself; only where to go next is kept here, by nonce.
+  // Entries go once used, or after 10 minutes. (bwx:tickets held the ticket before 23 Nov 2026: dropped.)
+  try { localStorage.removeItem('bwx:tickets'); } catch {}
+  const RETURNS = 'bwx:returns';
+  const returns = (fn) => {
     try {
-      const m = JSON.parse(localStorage.getItem(TICKETS) || '{}') || {};
+      const m = JSON.parse(localStorage.getItem(RETURNS) || '{}') || {};
       for (const n of Object.keys(m)) if (!(Date.now() - m[n].at < 6e5)) delete m[n];
       const out = fn(m);
-      localStorage.setItem(TICKETS, JSON.stringify(m));
+      localStorage.setItem(RETURNS, JSON.stringify(m));
       return out;
     } catch { return null; }
   };
-  const keepTicket = (nonce, ticket, next) => tickets((m) => { m[nonce] = { ticket, next: next || null, at: Date.now() }; });
-  const takeTicket = (nonce) => tickets((m) => { const t = m[nonce] || null; delete m[nonce]; return t; });
+  const keepReturn = (nonce, next) => returns((m) => { m[nonce] = { next: next || null, at: Date.now() }; });
+  const takeReturn = (nonce) => returns((m) => { const t = m[nonce] || null; delete m[nonce]; return t; });
   const here = () => location.origin + location.pathname;
   const go = (to) => { const u = new URL(to, location.origin); if (u.origin === location.origin && u.href !== here()) location.replace(u.href); };
 
@@ -125,8 +126,8 @@
   // The family connect (connector 0.7.0): find every wallet, use the one in this browser when there's exactly one,
   // otherwise the chooser (bWalletX first, other BRC-100 wallets, Metanet Desktop on tap, the phone QR last).
   async function connect(toStudio) {
-    let ticket = null, pre = null;
-    const challenge = async (identityKey) => { const ch = await post('/api/bwalletx/challenge', identityKey ? { identityKey } : {}); ticket = ch.ticket; return ch; };
+    let pre = null;
+    const challenge = (identityKey) => post('/api/bwalletx/challenge', identityKey ? { identityKey } : {});
     // Connecting from the navbar (any page) opens your account page. The claim page's own step-3 button stays put.
     // Pages that keep you where you are (<body data-bwx-stay>, e.g. /post with a draft open) don't jump to /studio.
     const next = toStudio && !document.body.hasAttribute('data-bwx-stay') && !/^\/studio\/?$/.test(location.pathname) ? '/studio' : null;
@@ -142,7 +143,7 @@
       if (opt.kind === 'pairing' && pairing.returnTo) {
         pre = await challenge().catch(() => null);
         login = pre && C.foldableLogin?.(pre, location.origin);
-        if (login) keepTicket(pre.nonce, ticket, next);
+        if (login) keepReturn(pre.nonce, next);
       }
       const cw = await opt.connect({ identity: false, ...(login && { login }) });
       if (!cw.wallet) throw new Error('That wallet can’t sign in here. Use bWalletX or another BRC-100 wallet.');
@@ -154,8 +155,8 @@
         identityKey: cw.identityKey || C.rememberedIdentity(),
         challenge: (identityKey) => { const c = pre; pre = null; return c ? Promise.resolve(c) : challenge(identityKey); },
       });
-      const v = await post('/api/bwalletx/verify', { identityKey: r.identityKey, nonce: r.nonce, signature: r.signature, ticket });
-      pairing.close(); takeTicket(r.nonce);
+      const v = await post('/api/bwalletx/verify', { identityKey: r.identityKey, nonce: r.nonce, signature: r.signature });
+      pairing.close(); takeReturn(r.nonce);
       signedIn(v.identityKey, r.wallet, toStudio);
       if (next) location.assign(next);
     } catch (e) {
@@ -172,15 +173,14 @@
     try { r = await C.resumeReturnedPairing(); } catch {}
     if (!r) return false;
     try {
-      const t = r.login && takeTicket(r.login.nonce);
+      const t = r.login && takeReturn(r.login.nonce);
       let v;
-      if (r.login && t) {
-        v = await post('/api/bwalletx/verify', { identityKey: r.login.identityKey, nonce: r.login.nonce, signature: r.login.signature, ticket: t.ticket });
+      if (r.login) {
+        v = await post('/api/bwalletx/verify', { identityKey: r.login.identityKey, nonce: r.login.nonce, signature: r.login.signature });
       } else {
         // Paired, but no sign-in came with it (an older bWalletX): ask the paired wallet for it the usual way.
-        let ticket = null;
-        const s = await C.signInWithBwalletX({ wallet: r.wallet, challenge: async (identityKey) => { const ch = await post('/api/bwalletx/challenge', identityKey ? { identityKey } : {}); ticket = ch.ticket; return ch; } });
-        v = await post('/api/bwalletx/verify', { identityKey: s.identityKey, nonce: s.nonce, signature: s.signature, ticket });
+        const s = await C.signInWithBwalletX({ wallet: r.wallet, challenge: (identityKey) => post('/api/bwalletx/challenge', identityKey ? { identityKey } : {}) });
+        v = await post('/api/bwalletx/verify', { identityKey: s.identityKey, nonce: s.nonce, signature: s.signature });
       }
       signedIn(v.identityKey, r.wallet, !!(t && t.next));
       const to = (t && t.next) || r.page;
