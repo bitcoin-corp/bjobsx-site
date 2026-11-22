@@ -5,8 +5,8 @@
 // so only the key holder can name a profile. The identity key comes from the signed-in session, never the body.
 // Profile content is never sent: the public profile lives on chain, signed by the owner (mint/records.js), and the
 // push server gets `profile: null` every time. A body that still carries a profile is refused.
-import { readCookie, verifySession } from '@bwalletx/connect/server';
-import { body, originOk, secret } from '../bwalletx/_auth.js';
+import { verifySession } from '@bwalletx/connect/server';
+import { body, originOk, secret, sessionToken } from '../bwalletx/_auth.js';
 import { PUSH_API, USERNAME_RE } from '../_lib.js';
 
 export default async function handler(req, res) {
@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
   if (!originOk(req.headers.origin)) return res.status(403).json({ error: 'Wrong origin.' });
   const s = secret();
-  const me = s ? (await verifySession(readCookie(req.headers.cookie, 'bwx_session'), { secret: s }))?.sub || null : null;
+  const me = s ? (await verifySession(sessionToken(req.headers.cookie), { secret: s }))?.sub || null : null;
   if (!me) return res.status(401).json({ error: 'Connect bWalletX first.' });
   const b = await body(req);
   if (b.profile != null) return res.status(400).json({ error: 'Your public profile is published on chain from your wallet, not saved here.' });

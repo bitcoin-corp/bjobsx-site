@@ -9,14 +9,14 @@
 // Every page gets `walletLinks`: [{provider, handle}] linked in the bWalletX, signature-checked (api/_social.js).
 // Caching: a signed-out ?name= answer has nothing personal in it, so it is cached for a minute (Vary: Cookie);
 // anything with a session cookie is no-store.
-import { readCookie, verifySession } from '@bwalletx/connect/server';
-import { secret } from './bwalletx/_auth.js';
+import { verifySession } from '@bwalletx/connect/server';
+import { secret, sessionToken } from './bwalletx/_auth.js';
 import { loadProfile, NAME_RE } from './_lib.js';
 import { linkFor, linkedinOn } from './linkedin/_li.js';
 import { walletLinks } from './_social.js';
 
 export default async function handler(req, res) {
-  const cookie = readCookie(req.headers.cookie, 'bwx_session');
+  const cookie = sessionToken(req.headers.cookie);
   const s = secret();
   const me = s && cookie ? (await verifySession(cookie, { secret: s }))?.sub || null : null;
   const shareable = !req.query?.me && !cookie;

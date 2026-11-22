@@ -17,7 +17,7 @@
 //
 // Off until LINKEDIN_CLIENT_ID and LINKEDIN_CLIENT_SECRET are set: start answers 503, the page says "Coming soon".
 import { createHash, randomBytes } from 'node:crypto';
-import { ORIGIN, open, originOk, secret, seal } from '../bwalletx/_auth.js';
+import { open, ORIGIN, originOk, seal, secret, sessionToken } from '../bwalletx/_auth.js';
 
 export const AUTH_URL = 'https://www.linkedin.com/oauth/v2/authorization';
 export const TOKEN_URL = 'https://www.linkedin.com/oauth/v2/accessToken';
@@ -108,8 +108,8 @@ async function userinfo(f, token) {
 /** The wallet session's identity key (the same check as /api/profile). Loaded lazily so tests can pass their own. */
 async function sessionKey(req) {
   const s = secret(); if (!s) return null;
-  const { readCookie: rc, verifySession } = await import('@bwalletx/connect/server');
-  return (await verifySession(rc(req.headers.cookie, 'bwx_session'), { secret: s }))?.sub || null;
+  const { verifySession } = await import('@bwalletx/connect/server');
+  return (await verifySession(sessionToken(req.headers.cookie), { secret: s }))?.sub || null;
 }
 const deps0 = { me: sessionKey, fetch: (...a) => fetch(...a), now: () => Date.now() };
 const go = (res, to, cookies) => {

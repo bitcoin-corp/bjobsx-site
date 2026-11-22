@@ -1,6 +1,7 @@
-// POST /api/bwalletx/challenge { identityKey } -> { nonce, message, expiresAt, ..., ticket }
-import { createChallenge, originAllowed } from '@bwalletx/connect/server';
-import { ORIGIN, body, originOk, seal, secret } from './_auth.js';
+// POST /api/bwalletx/challenge { identityKey? } -> { nonce, message, expiresAt, ... } + the sealed ticket as an
+// HttpOnly __Host-bwx_t_<nonce> cookie (see _auth.js).
+import { createChallenge } from '@bwalletx/connect/server';
+import { ORIGIN, body, originOk, seal, secret, ticketCookie } from './_auth.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
@@ -12,7 +13,8 @@ export default async function handler(req, res) {
   try {
     const ch = await createChallenge({ origin: ORIGIN, identityKey: (await body(req)).identityKey, store });
     res.setHeader('Cache-Control', 'no-store');
-    return res.status(200).json({ ...ch, ticket: seal(s, pending) });
+    res.setHeader('Set-Cookie', ticketCookie(ch.nonce, seal(s, pending)));
+    return res.status(200).json(ch);
   } catch (e) {
     return res.status(400).json({ error: e.message });
   }
