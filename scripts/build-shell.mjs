@@ -26,8 +26,8 @@ export const PAGES = {
 
 export const NAV = [['/contracts', 'Jobs'], ['/browse', 'People'], ['/studio', 'Your profile']];
 export const POST_HREF = '/post';
-export const CONNECT_SRC = 'https://unpkg.com/@bwalletx/connect@0.7.0/dist/bwalletx-connect.global.js';
-const CONNECT_SRI = 'sha384-VkIrDOw3Hmv7qnytbLGT1hNz7DbJ3IJiI91HSOTqjWu146/hl1KINi4v/hPzTfvI';
+export const CONNECT_SRC = 'https://unpkg.com/@bwalletx/connect@0.9.0/dist/bwalletx-connect.global.js';
+const CONNECT_SRI = 'sha384-ljVpAVRFkV0Eog6yjxI9c5nJKl0Ri9p77SuIPOohuhh6O1SygKqR1cprJ7kJfrK5';
 const B_PATH = 'M45 12V72H27V30Z M27 72a33 33 0 1 1 66 0a33 33 0 1 1-66 0Z M45 72a15 15 0 1 0 30 0a15 15 0 1 0-30 0Z';
 
 export function strip() {
